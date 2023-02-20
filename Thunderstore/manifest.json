@@ -1,0 +1,9 @@
+{
+  "name": "PerfectPlacement",
+  "version_number": "1.0.0",
+  "website_url": "https://discord.gg/pdHgy6Bsng",
+  "description": "Modular FreePlacementRotation, AdvancedBuildingMode, and AdvancedEditingMode from ValheimPlus. The author is not affiliated with the ValheimPlus team. See the description for full details and additional information",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.1901"
+  ]
+}

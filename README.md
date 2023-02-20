@@ -12,7 +12,7 @@
 
 `This mod uses a file watcher. If the configuration file is not changed with BepInEx Configuration manager, but changed in the file directly on the server, upon file save, it will sync the changes to all clients.`
 
-
+## Source code for this variation can be found [here](https://github.com/AzumattDev/PerfectPlacement)
 
 <details><summary>Configuration Options</summary>
 
@@ -238,6 +238,7 @@ For Questions or Comments, find me in the Odin Plus Team Discord or in mine:
 
 
 > # Update Information (Latest listed first)
-| `Version` | `Update Notes`                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Version` | `Update Notes`                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1.0.1     | - Update README to include GitHub link to the source to more closely comply with the license.                                                                                                                                                                                                                                                                                                                                                                                |
 | 1.0.0     | - **Initial Release**<br/>  - Benefits over the original inside ValheimPlus is this has ServerSync internally. Meaning the configurations will sync and update instantly for the section toggles.<br/>  - The hotkeys are not synced with the server and can be changed freely.<br/>  - Another benefit is WardIsLove compatibility<br/> - Yet another is that this uses the default BepInEx configuration and can be edited directly with the BepInEx Configuration Manager |

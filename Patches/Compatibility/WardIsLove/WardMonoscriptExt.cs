@@ -16,6 +16,11 @@ namespace PerfectPlacement.Patches.Compatibility.WardIsLove
                 ModCompat.InvokeMethod<object>(ClassType(), null, "GetWardMonoscript", new object[] { pos });
             return new WardMonoscript(script);
         }
+        
+        public static float GetWardRadius(this WardMonoscript wrapper)
+        {
+            return ModCompat.InvokeMethod<float>(ClassType(), null, "GetWardRadius", new[] { wrapper.targetScript });
+        }
 
         public static bool GetDoorInteractOn(this WardMonoscript wrapper)
         {

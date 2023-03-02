@@ -34,6 +34,10 @@ Enable Advanced Editing Mode [Synced with Server]
 * If on, Advanced Editing Mode is enabled. Everything in section 4 will be affected.
     * Default Value: Off
 
+Enable Grid Alignment [Synced with Server]
+* If off, Grid Alignment is disabled overall, all code for it will be skipped. Everything in section 5 will be affected.
+    * Default Value: On
+
 `2 - Free Placement Rotation`
 
 Rotate Y [Not Synced with Server]
@@ -115,6 +119,21 @@ Increase Scroll Speed [Not Synced with Server]
 Decrease Scroll Speed [Not Synced with Server]
 * The key to decrease the scroll speed. Decreases the amount an object rotates and moves. Holding Shift will increase in increments of 10 instead of 1.
     * Default Value: KeypadMinus
+
+`5 - Grid Alignment`
+
+Align to Grid [Not Synced with Server]
+* The key to enable grid alignment while building
+    * Default Value: LeftAlt
+
+Align Toggle [Not Synced with Server]
+* The key to toggle grid alignment while building
+    * Default Value: F7
+
+Change Default Alignment [Not Synced with Server]
+* The key to change the default alignment
+    * Default Value: F6
+
 </details>
 
 
@@ -168,6 +187,12 @@ Decrease Scroll Speed [Not Synced with Server]
 **NOTE:**
 * *Other players will not be able to see the item being moved until the player building the item confirms the placement. Dungeons and other no-build areas are still restricted.*
 
+
+### Grid alignment
+* When pressing the configured key (left alt is the default) new buildings will be aligned to a global grid.
+  The mode can also be toggled by pressing another key (F7 by default).
+  Building elements (from the third tab) are aligned to to their size (e.g. a wood wall will have an alignment of 2m in X and Y direction). The alignment of building elements in other direction can be configured (by default with the F6 key) to 0.5m, 1m, 2m or 4m.
+  Other buildings like furniture will always be aligned to 0.5m, but the Y position will not be aligned (to make sure they are always exactly on the floor).
 
 
 </details>
@@ -240,5 +265,6 @@ For Questions or Comments, find me in the Odin Plus Team Discord or in mine:
 > # Update Information (Latest listed first)
 | `Version` | `Update Notes`                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 |-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1.0.2     | - Add Grid Alignment<br/>- Fix some issues in the WardIsLove compatibility                                                                                                                                                                                                                                                                                                                                                                                                   |
 | 1.0.1     | - Update README to include GitHub link to the source to more closely comply with the license.                                                                                                                                                                                                                                                                                                                                                                                |
 | 1.0.0     | - **Initial Release**<br/>  - Benefits over the original inside ValheimPlus is this has ServerSync internally. Meaning the configurations will sync and update instantly for the section toggles.<br/>  - The hotkeys are not synced with the server and can be changed freely.<br/>  - Another benefit is WardIsLove compatibility<br/> - Yet another is that this uses the default BepInEx configuration and can be edited directly with the BepInEx Configuration Manager |

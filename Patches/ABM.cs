@@ -326,7 +326,10 @@ namespace PerfectPlacement.Patches
                 if (WardIsLovePlugin.WardEnabled().Value &&
                     WardMonoscript.CheckInWardMonoscript(PlayerInstance.m_placementGhost.transform.position))
                 {
-                    PlayerInstance.m_placementStatus = Player.PlacementStatus.PrivateZone;
+                    if (!WardMonoscript.CheckAccess(PlayerInstance.m_placementGhost.transform.position, radius))
+                    {
+                        PlayerInstance.m_placementStatus = Player.PlacementStatus.PrivateZone;
+                    }
                 }
             }
             

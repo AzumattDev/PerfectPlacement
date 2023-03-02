@@ -22,7 +22,7 @@ namespace PerfectPlacement
          * 
          */
         internal const string ModName = "PerfectPlacement";
-        internal const string ModVersion = "1.0.1";
+        internal const string ModVersion = "1.0.2";
         internal const string Author = "Azumatt_and_ValheimPlusDevs";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -56,12 +56,12 @@ namespace PerfectPlacement
         public void Awake()
         {
             _serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On,
-                new ConfigDescription("If on, the configuration is locked and can be changed by server admins only.", null, new ConfigurationManagerAttributes { Order = 4 }));
+                new ConfigDescription("If on, the configuration is locked and can be changed by server admins only.", null, new ConfigurationManagerAttributes { Order = 5 }));
             _ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
             
             
             /* FPM Configs */
-            fpmIsEnabled = config("1 - General", "Enable Free Placement Rotation", Toggle.Off,
+            fpmIsEnabled = config("1 - General", "Enable Free Placement Rotation", Toggle.On,
                 new ConfigDescription("If on, Free Placement Rotation is enabled. Everything in section 2 will be affected.", null,new ConfigurationManagerAttributes { Order = 1 }));
             fpmrotateY = config("2 - Free Placement Rotation", "Rotate Y", KeyCode.LeftAlt,
                 "The key to rotate the object you are placing on the Y axis, Rotates placement marker by 1 degree with keep ability to attach to nearly pieces.", false);
@@ -75,7 +75,7 @@ namespace PerfectPlacement
                 "Set rotation to be perpendicular to piece in front of you.", false);
             
             /* ABM Configs*/
-            abmIsEnabled = config("1 - General", "Enable Advanced Building Mode", Toggle.Off,
+            abmIsEnabled = config("1 - General", "Enable Advanced Building Mode", Toggle.On,
                 new ConfigDescription("If on, Advanced Building Mode is enabled. Everything in section 3 will be affected.", null, new ConfigurationManagerAttributes { Order = 2 }));
             abmenterAdvancedBuildingMode = config("3 - Advanced Building Mode", "Enter Advanced Building Mode", KeyCode.F1,
                 "The key to enter Advanced Building Mode when building", false);
@@ -93,7 +93,7 @@ namespace PerfectPlacement
             
             
             /* AEM Configs */
-            aemIsEnabled = config("1 - General", "Enable Advanced Editing Mode", Toggle.Off,
+            aemIsEnabled = config("1 - General", "Enable Advanced Editing Mode", Toggle.On,
                 new ConfigDescription("If on, Advanced Editing Mode is enabled. Everything in section 4 will be affected.", null, new ConfigurationManagerAttributes { Order = 3 }));
             aementerAdvancedEditingMode = config("4 - Advanced Editing Mode", "Enter Advanced Editing Mode", KeyCode.Keypad0,
                 "The key to enter Advanced Editing Mode", false);
@@ -111,6 +111,16 @@ namespace PerfectPlacement
                 "The key to increase the scroll speed. Increases the amount an object rotates and moves. Holding Shift will increase in increments of 10 instead of 1.", false);
             aemdecreaseScrollSpeed = config("4 - Advanced Editing Mode", "Decrease Scroll Speed", KeyCode.KeypadMinus,
                 "The key to decrease the scroll speed. Decreases the amount an object rotates and moves. Holding Shift will increase in increments of 10 instead of 1.", false);
+            
+            /* Grid Configs */
+            gridAlignmentEnabled = config("1 - General", "Enable Grid Alignment", Toggle.On,
+                new ConfigDescription("If off, Grid Alignment is disabled overall, all code for it will be skipped. Everything in section 5 will be affected.", null, new ConfigurationManagerAttributes { Order = 4 }));
+            alignToGrid = config("5 - Grid Alignment", "Align to Grid", KeyCode.LeftAlt,
+                "The key to enable grid alignment while building", false);
+            alignToggle = config("5 - Grid Alignment", "Align Toggle", KeyCode.F7,
+                "The key to toggle grid alignment while building", false);
+            changeDefaultAlignment = config("5 - Grid Alignment", "Change Default Alignment", KeyCode.F6,
+                "The key to change the default alignment", false);
             
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
@@ -215,6 +225,12 @@ namespace PerfectPlacement
         internal static ConfigEntry<KeyCode> aempasteObjectRotation = null!;
         internal static ConfigEntry<KeyCode> aemincreaseScrollSpeed = null!;
         internal static ConfigEntry<KeyCode> aemdecreaseScrollSpeed = null!;
+        
+        /* Grid Configs */
+        internal static ConfigEntry<Toggle> gridAlignmentEnabled = null!;
+        internal static ConfigEntry<KeyCode> alignToGrid = null!;
+        internal static ConfigEntry<KeyCode> alignToggle = null!;
+        internal static ConfigEntry<KeyCode> changeDefaultAlignment = null!;
 
         private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
             bool synchronizedSetting = true)

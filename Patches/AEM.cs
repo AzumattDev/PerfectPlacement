@@ -418,8 +418,11 @@ namespace PerfectPlacement.Patches
                 if (WardIsLovePlugin.WardEnabled().Value &&
                     WardMonoscript.CheckInWardMonoscript(HitPiece.transform.position))
                 {
-                    // private zone
-                    hitValid = false;
+                    if (!WardMonoscript.CheckAccess(HitPiece.transform.position, radius, true))
+                    {
+                        // private zone
+                        hitValid = false;
+                    }
                 }
             }
 

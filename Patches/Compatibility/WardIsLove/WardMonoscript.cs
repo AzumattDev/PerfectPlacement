@@ -21,6 +21,11 @@ namespace PerfectPlacement.Patches.Compatibility.WardIsLove
         {
             return InvokeMethod<bool>(ClassType(), null, "CheckInWardMonoscript", new object[] { point, flash });
         }
+        
+        public static bool CheckAccess(Vector3 point, float radius = 0.0f, bool flash = true, bool wardCheck = false)
+        {
+            return InvokeMethod<bool>(ClassType(), null, "CheckInWardMonoscript", new object[] { point, radius, flash, wardCheck });
+        }
 
         public ZNetView GetZNetView()
         {

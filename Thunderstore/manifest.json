@@ -1,6 +1,6 @@
 {
   "name": "PerfectPlacement",
-  "version_number": "1.0.1",
+  "version_number": "1.0.2",
   "website_url": "https://github.com/AzumattDev/PerfectPlacement",
   "description": "Modular FreePlacementRotation, AdvancedBuildingMode, and AdvancedEditingMode from ValheimPlus. The author is not affiliated with the ValheimPlus team. See the description for full details and additional information",
   "dependencies": [

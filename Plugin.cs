@@ -22,7 +22,7 @@ namespace PerfectPlacement
          * 
          */
         internal const string ModName = "PerfectPlacement";
-        internal const string ModVersion = "1.0.2";
+        internal const string ModVersion = "1.0.3";
         internal const string Author = "Azumatt_and_ValheimPlusDevs";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -113,7 +113,7 @@ namespace PerfectPlacement
                 "The key to decrease the scroll speed. Decreases the amount an object rotates and moves. Holding Shift will increase in increments of 10 instead of 1.", false);
             
             /* Grid Configs */
-            gridAlignmentEnabled = config("1 - General", "Enable Grid Alignment", Toggle.On,
+            gridAlignmentEnabled = config("1 - General", "Enable Grid Alignment", Toggle.Off,
                 new ConfigDescription("If off, Grid Alignment is disabled overall, all code for it will be skipped. Everything in section 5 will be affected.", null, new ConfigurationManagerAttributes { Order = 4 }));
             alignToGrid = config("5 - Grid Alignment", "Align to Grid", KeyCode.LeftAlt,
                 "The key to enable grid alignment while building", false);

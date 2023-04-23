@@ -36,7 +36,7 @@ Enable Advanced Editing Mode [Synced with Server]
 
 Enable Grid Alignment [Synced with Server]
 * If off, Grid Alignment is disabled overall, all code for it will be skipped. Everything in section 5 will be affected.
-    * Default Value: On
+    * Default Value: Off
 
 `2 - Free Placement Rotation`
 
@@ -260,11 +260,3 @@ For Questions or Comments, find me in the Odin Plus Team Discord or in mine:
 ***
 
 </details>
-
-
-> # Update Information (Latest listed first)
-| `Version` | `Update Notes`                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1.0.2     | - Add Grid Alignment<br/>- Fix some issues in the WardIsLove compatibility                                                                                                                                                                                                                                                                                                                                                                                                   |
-| 1.0.1     | - Update README to include GitHub link to the source to more closely comply with the license.                                                                                                                                                                                                                                                                                                                                                                                |
-| 1.0.0     | - **Initial Release**<br/>  - Benefits over the original inside ValheimPlus is this has ServerSync internally. Meaning the configurations will sync and update instantly for the section toggles.<br/>  - The hotkeys are not synced with the server and can be changed freely.<br/>  - Another benefit is WardIsLove compatibility<br/> - Yet another is that this uses the default BepInEx configuration and can be edited directly with the BepInEx Configuration Manager |

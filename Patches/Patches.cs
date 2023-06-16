@@ -34,7 +34,7 @@ public static class BlockCameraScrollInAEM
             else
             {*/
             __instance.m_maxDistance = 6;
-            __instance.m_minDistance = 1;
+            //__instance.m_minDistance = 2f;
             /*}*/
         }
     }

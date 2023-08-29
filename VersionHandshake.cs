@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using HarmonyLib;
+using PerfectPlacement;
 
-namespace PerfectPlacement
+namespace AllManagersModTemplate
 {
     [HarmonyPatch(typeof(ZNet), nameof(ZNet.OnNewConnection))]
     public static class RegisterAndCheckVersion
@@ -11,13 +16,13 @@ namespace PerfectPlacement
         {
             // Register version check call
             PerfectPlacementPlugin.PerfectPlacementLogger.LogDebug("Registering version RPC handler");
-            peer.m_rpc.Register($"{PerfectPlacementPlugin.ModName}_VersionCheck",
-                new Action<ZRpc, ZPackage>(RpcHandlers.RPC_PerfectPlacement_Version));
+            peer.m_rpc.Register($"{PerfectPlacementPlugin.ModName}_VersionCheck", new Action<ZRpc, ZPackage>(RpcHandlers.RPC_AllManagersModTemplate_Version));
 
             // Make calls to check versions
-            PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("Invoking version check");
+            PerfectPlacementPlugin.PerfectPlacementLogger.LogDebug("Invoking version check");
             ZPackage zpackage = new();
             zpackage.Write(PerfectPlacementPlugin.ModVersion);
+            zpackage.Write(RpcHandlers.ComputeHashForMod().Replace("-", ""));
             peer.m_rpc.Invoke($"{PerfectPlacementPlugin.ModName}_VersionCheck", zpackage);
         }
     }
@@ -29,15 +34,14 @@ namespace PerfectPlacement
         {
             if (!__instance.IsServer() || RpcHandlers.ValidatedPeers.Contains(rpc)) return true;
             // Disconnect peer if they didn't send mod version at all
-            PerfectPlacementPlugin.PerfectPlacementLogger.LogWarning(
-                $"Peer ({rpc.m_socket.GetHostName()}) never sent version or couldn't due to previous disconnect, disconnecting");
+            PerfectPlacementPlugin.PerfectPlacementLogger.LogWarning($"Peer ({rpc.m_socket.GetHostName()}) never sent version or couldn't due to previous disconnect, disconnecting");
             rpc.Invoke("Error", 3);
             return false; // Prevent calling underlying method
         }
 
         private static void Postfix(ZNet __instance)
         {
-            ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.instance.GetServerPeerID(), "RequestAdminSync",
+            ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.instance.GetServerPeerID(), $"{PerfectPlacementPlugin.ModName}RequestAdminSync",
                 new ZPackage());
         }
     }
@@ -73,20 +77,21 @@ namespace PerfectPlacement
     {
         public static readonly List<ZRpc> ValidatedPeers = new();
 
-        public static void RPC_PerfectPlacement_Version(ZRpc rpc, ZPackage pkg)
+        public static void RPC_AllManagersModTemplate_Version(ZRpc rpc, ZPackage pkg)
         {
             string? version = pkg.ReadString();
+            string? hash = pkg.ReadString();
+
+            var hashForAssembly = ComputeHashForMod().Replace("-", "");
             PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("Version check, local: " +
-                                                                              PerfectPlacementPlugin.ModVersion +
-                                                                              ",  remote: " + version);
-            if (version != PerfectPlacementPlugin.ModVersion)
+                                                                  PerfectPlacementPlugin.ModVersion +
+                                                                  ",  remote: " + version);
+            if (hash != hashForAssembly || version != PerfectPlacementPlugin.ModVersion)
             {
-                PerfectPlacementPlugin.ConnectionError =
-                    $"{PerfectPlacementPlugin.ModName} Installed: {PerfectPlacementPlugin.ModVersion}\n Needed: {version}";
+                PerfectPlacementPlugin.ConnectionError = $"{PerfectPlacementPlugin.ModName} Installed: {PerfectPlacementPlugin.ModVersion} {hashForAssembly}\n Needed: {version} {hash}";
                 if (!ZNet.instance.IsServer()) return;
                 // Different versions - force disconnect client from server
-                PerfectPlacementPlugin.PerfectPlacementLogger.LogWarning(
-                    $"Peer ({rpc.m_socket.GetHostName()}) has incompatible version, disconnecting");
+                PerfectPlacementPlugin.PerfectPlacementLogger.LogWarning($"Peer ({rpc.m_socket.GetHostName()}) has incompatible version, disconnecting...");
                 rpc.Invoke("Error", 3);
             }
             else
@@ -105,6 +110,21 @@ namespace PerfectPlacement
                     ValidatedPeers.Add(rpc);
                 }
             }
+        }
+
+        public static string ComputeHashForMod()
+        {
+            using SHA256 sha256Hash = SHA256.Create();
+            // ComputeHash - returns byte array  
+            byte[] bytes = sha256Hash.ComputeHash(File.ReadAllBytes(Assembly.GetExecutingAssembly().Location));
+            // Convert byte array to a string   
+            StringBuilder builder = new();
+            foreach (byte b in bytes)
+            {
+                builder.Append(b.ToString("X2"));
+            }
+
+            return builder.ToString();
         }
     }
 }

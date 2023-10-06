@@ -53,8 +53,8 @@ namespace AllManagersModTemplate
         {
             if (__instance.m_connectionFailedPanel.activeSelf)
             {
-                __instance.m_connectionFailedError.resizeTextMaxSize = 25;
-                __instance.m_connectionFailedError.resizeTextMinSize = 15;
+               //__instance.m_connectionFailedError. = 25;
+               //__instance.m_connectionFailedError.resizeTextMinSize = 15;
                 __instance.m_connectionFailedError.text += "\n" + PerfectPlacementPlugin.ConnectionError;
             }
         }

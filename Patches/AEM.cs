@@ -1,5 +1,4 @@
 ﻿using PerfectPlacement.Patches.Compatibility.WardIsLove;
-using PerfectPlacement;
 using UnityEngine;
 
 namespace PerfectPlacement.Patches
@@ -157,14 +156,14 @@ namespace PerfectPlacement.Patches
                         ZNetView component1 = HitPiece.GetComponent<ZNetView>();
                         if ((UnityEngine.Object)component1 == (UnityEngine.Object)null)
                         {
-                            Debug.Log("AEM: Error, network object empty. Code: 2.");
+                            PerfectPlacement.PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("AEM: Error, network object empty. Code: 2.");
                             exitMode();
                             return;
                         }
                     }
                     catch
                     {
-                        Debug.Log("AEM: Error, network object empty. Code: 3.");
+                        PerfectPlacement.PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("AEM: Error, network object empty. Code: 3.");
                         exitMode();
                     }
 
@@ -206,7 +205,7 @@ namespace PerfectPlacement.Patches
                 ZNetView component1 = HitPiece.GetComponent<ZNetView>();
                 if ((UnityEngine.Object)component1 == (UnityEngine.Object)null)
                 {
-                    Debug.Log("AEM: Error, network object empty.");
+                    PerfectPlacement.PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("AEM: Error, network object empty.");
 
                     resetObjectTransform();
                     exitMode();
@@ -215,7 +214,7 @@ namespace PerfectPlacement.Patches
 
                 component1.ClaimOwnership();
                 ZNetScene.instance.Destroy(HitPiece.gameObject);
-                Debug.Log("AEM: Executed.");
+                PerfectPlacement.PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("AEM: Executed.");
 
                 exitMode();
                 return;
@@ -437,6 +436,7 @@ namespace PerfectPlacement.Patches
 
         private static void resetObjectTransform()
         {
+            if (HitPiece == null) return;
             notifyUser("Object has been reset to initial position & rotation.");
             HitPiece.transform.position = InitialPosition;
             HitPiece.transform.rotation = InitialRotation;

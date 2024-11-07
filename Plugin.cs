@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
@@ -22,7 +20,7 @@ namespace PerfectPlacement
          * 
          */
         internal const string ModName = "PerfectPlacement";
-        internal const string ModVersion = "1.1.7";
+        internal const string ModVersion = "1.1.8";
         internal const string Author = "Azumatt_and_ValheimPlusDevs";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";

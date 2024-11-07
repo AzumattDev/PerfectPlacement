@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using PerfectPlacement.Patches.Compatibility.WardIsLove;
-using PerfectPlacement;
 using UnityEngine;
 
 namespace PerfectPlacement.Patches

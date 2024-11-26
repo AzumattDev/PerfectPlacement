@@ -1,4 +1,5 @@
 ﻿using PerfectPlacement.Patches.Compatibility.WardIsLove;
+using PerfectPlacement.UI;
 using UnityEngine;
 
 namespace PerfectPlacement.Patches
@@ -183,6 +184,8 @@ namespace PerfectPlacement.Patches
             float rZ = 0;
             float rY = 0;
 
+            PerfectPlacementPlugin.UpdateKeyBindings();
+            
             if (Input.GetKeyDown(PerfectPlacementPlugin.aemresetAdvancedEditingMode.Value))
             {
                 resetObjectTransform();
@@ -196,10 +199,8 @@ namespace PerfectPlacement.Patches
                 }
 
                 // PLACE NEW
-                GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(HitPiece.gameObject,
-                    HitPiece.transform.position, HitPiece.transform.rotation);
-                HitPiece.m_placeEffect.Create(HitPiece.transform.position, HitPiece.transform.rotation,
-                    gameObject2.transform, 1f);
+                GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(HitPiece.gameObject, HitPiece.transform.position, HitPiece.transform.rotation);
+                HitPiece.m_placeEffect.Create(HitPiece.transform.position, HitPiece.transform.rotation, gameObject2.transform, 1f);
 
                 // REMOVE OLD
                 ZNetView component1 = HitPiece.GetComponent<ZNetView>();
@@ -457,12 +458,14 @@ namespace PerfectPlacement.Patches
         {
             notifyUser("Entering AEM");
             isActive = true;
+            KeyBindingOverlay.ToggleOverlay(true);
         }
 
         private static void exitMode()
         {
             notifyUser("Exiting AEM");
             forceExitNextIteration = true;
+            KeyBindingOverlay.ToggleOverlay(false);
         }
 
         private static void notifyUser(string Message, MessageHud.MessageType position = MessageHud.MessageType.TopLeft)
@@ -501,17 +504,13 @@ namespace PerfectPlacement.Patches
 
             if (Input.GetKeyDown(PerfectPlacementPlugin.aemincreaseScrollSpeed.Value))
             {
-                currentModificationSpeed = Mathf.Clamp(currentModificationSpeed + speedDelta, MIN_MODIFICATION_SPEED,
-                    MAX_MODIFICATION_SPEED);
-
+                currentModificationSpeed = Mathf.Clamp(currentModificationSpeed + speedDelta, MIN_MODIFICATION_SPEED, MAX_MODIFICATION_SPEED);
                 notifyUser("Modification Speed: " + currentModificationSpeed);
             }
 
             if (Input.GetKeyDown(PerfectPlacementPlugin.aemdecreaseScrollSpeed.Value))
             {
-                currentModificationSpeed = Mathf.Clamp(currentModificationSpeed - speedDelta, MIN_MODIFICATION_SPEED,
-                    MAX_MODIFICATION_SPEED);
-
+                currentModificationSpeed = Mathf.Clamp(currentModificationSpeed - speedDelta, MIN_MODIFICATION_SPEED, MAX_MODIFICATION_SPEED);
                 notifyUser("Modification Speed: " + currentModificationSpeed);
             }
         }

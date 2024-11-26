@@ -7,6 +7,8 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using JetBrains.Annotations;
+using PerfectPlacement.Patches;
+using PerfectPlacement.UI;
 using ServerSync;
 using UnityEngine;
 
@@ -17,10 +19,10 @@ namespace PerfectPlacement
     {
         /*
          * This code is almost a direct copy from ValheimPlus. The modifications are ServerSync additions and WardIsLove compatibility, author credits and some minor changes.
-         * 
+         *
          */
         internal const string ModName = "PerfectPlacement";
-        internal const string ModVersion = "1.1.8";
+        internal const string ModVersion = "1.1.9";
         internal const string Author = "Azumatt_and_ValheimPlusDevs";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -39,14 +41,13 @@ namespace PerfectPlacement
             On = 1,
             Off = 0
         }
-        
+
         internal class PlayerData
         {
             public Vector3 PlaceRotation = Vector3.zero;
             public bool Opposite;
             public Piece LastPiece;
             public KeyCode LastKeyCode;
-            
         }
 
         internal static readonly Dictionary<Player, PlayerData> PlayersData = new();
@@ -56,11 +57,11 @@ namespace PerfectPlacement
             _serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On,
                 new ConfigDescription("If on, the configuration is locked and can be changed by server admins only.", null, new ConfigurationManagerAttributes { Order = 5 }));
             _ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
-            
-            
+
+
             /* FPM Configs */
             fpmIsEnabled = config("1 - General", "Enable Free Placement Rotation", Toggle.On,
-                new ConfigDescription("If on, Free Placement Rotation is enabled. Everything in section 2 will be affected.", null,new ConfigurationManagerAttributes { Order = 1 }));
+                new ConfigDescription("If on, Free Placement Rotation is enabled. Everything in section 2 will be affected.", null, new ConfigurationManagerAttributes { Order = 1 }));
             fpmrotateY = config("2 - Free Placement Rotation", "Rotate Y", KeyCode.LeftAlt,
                 "The key to rotate the object you are placing on the Y axis, Rotates placement marker by 1 degree with keep ability to attach to nearly pieces.", false);
             fpmrotateX = config("2 - Free Placement Rotation", "Rotate X", KeyCode.C,
@@ -71,12 +72,14 @@ namespace PerfectPlacement
                 "Copy rotation of placement marker from target piece in front of you.", false);
             fpmcopyRotationPerpendicular = config("2 - Free Placement Rotation", "Copy Rotation Perpendicular", KeyCode.G,
                 "Set rotation to be perpendicular to piece in front of you.", false);
-            
+
             /* ABM Configs*/
             abmIsEnabled = config("1 - General", "Enable Advanced Building Mode", Toggle.On,
                 new ConfigDescription("If on, Advanced Building Mode is enabled. Everything in section 3 will be affected.", null, new ConfigurationManagerAttributes { Order = 2 }));
             abmenterAdvancedBuildingMode = config("3 - Advanced Building Mode", "Enter Advanced Building Mode", KeyCode.F1,
                 "The key to enter Advanced Building Mode when building", false);
+            abmresetAdvancedBuildingMode = config("3 - Advanced Building Mode", "Reset Advanced Building Mode", KeyCode.F7,
+                "The key to reset the object to its original position and rotation", false);
             abmexitAdvancedBuildingMode = config("3 - Advanced Building Mode", "Exit Advanced Building Mode", KeyCode.F3,
                 "The key to exit Advanced Building Mode when building", false);
             abmcopyObjectRotation = config("3 - Advanced Building Mode", "Copy Object Rotation", KeyCode.Keypad7,
@@ -87,9 +90,8 @@ namespace PerfectPlacement
                 "Increases the amount an object rotates and moves. Holding Shift will increase in increments of 10 instead of 1.", false);
             abmdecreaseScrollSpeed = config("3 - Advanced Building Mode", "Decrease Scroll Speed", KeyCode.KeypadMinus,
                 "Decreases the amount an object rotates and moves. Holding Shift will decrease in increments of 10 instead of 1.", false);
-            
-            
-            
+
+
             /* AEM Configs */
             aemIsEnabled = config("1 - General", "Enable Advanced Editing Mode", Toggle.On,
                 new ConfigDescription("If on, Advanced Editing Mode is enabled. Everything in section 4 will be affected.", null, new ConfigurationManagerAttributes { Order = 3 }));
@@ -109,7 +111,7 @@ namespace PerfectPlacement
                 "The key to increase the scroll speed. Increases the amount an object rotates and moves. Holding Shift will increase in increments of 10 instead of 1.", false);
             aemdecreaseScrollSpeed = config("4 - Advanced Editing Mode", "Decrease Scroll Speed", KeyCode.KeypadMinus,
                 "The key to decrease the scroll speed. Decreases the amount an object rotates and moves. Holding Shift will increase in increments of 10 instead of 1.", false);
-            
+
             /* Grid Configs */
             gridAlignmentEnabled = config("1 - General", "Enable Grid Alignment", Toggle.Off,
                 new ConfigDescription("If off, Grid Alignment is disabled overall, all code for it will be skipped. Everything in section 5 will be affected.", null, new ConfigurationManagerAttributes { Order = 4 }));
@@ -119,7 +121,7 @@ namespace PerfectPlacement
                 "The key to toggle grid alignment while building", false);
             changeDefaultAlignment = config("5 - Grid Alignment", "Change Default Alignment", KeyCode.F6,
                 "The key to change the default alignment", false);
-            
+
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
             SetupWatcher();
@@ -129,7 +131,7 @@ namespace PerfectPlacement
         {
             AutoDoc();
         }
-        
+
         internal void AutoDoc()
         {
 #if DEBUG
@@ -191,11 +193,41 @@ namespace PerfectPlacement
             }
         }
 
+        internal static void UpdateKeyBindings()
+        {
+            if (ABM.isActive)
+            {
+                KeyBindingOverlay.UpdateBindings("Advanced Building Mode", new Dictionary<string, string>
+                {
+                    { "Enter Mode", PerfectPlacementPlugin.abmenterAdvancedBuildingMode.Value.ToString() },
+                    { "Exit Mode", PerfectPlacementPlugin.abmexitAdvancedBuildingMode.Value.ToString() },
+                    { "Reset Position/Rotation", PerfectPlacementPlugin.abmresetAdvancedBuildingMode.Value.ToString() },
+                    { "Copy Rotation", PerfectPlacementPlugin.abmcopyObjectRotation.Value.ToString() },
+                    { "Paste Rotation", PerfectPlacementPlugin.abmpasteObjectRotation.Value.ToString() },
+                    { "Increase Speed", PerfectPlacementPlugin.abmincreaseScrollSpeed.Value.ToString() },
+                    { "Decrease Speed", PerfectPlacementPlugin.abmdecreaseScrollSpeed.Value.ToString() }
+                });
+            }
+            else if (AEM.isActive)
+            {
+                KeyBindingOverlay.UpdateBindings("Advanced Editing Mode", new Dictionary<string, string>
+                {
+                    { "Enter Mode", PerfectPlacementPlugin.aementerAdvancedEditingMode.Value.ToString() },
+                    { "Exit Mode", PerfectPlacementPlugin.aemabortAndExitAdvancedEditingMode.Value.ToString() },
+                    { "Confirm Placement", PerfectPlacementPlugin.aemconfirmPlacementOfAdvancedEditingMode.Value.ToString() },
+                    { "Copy Rotation", PerfectPlacementPlugin.aemcopyObjectRotation.Value.ToString() },
+                    { "Paste Rotation", PerfectPlacementPlugin.aempasteObjectRotation.Value.ToString() },
+                    { "Increase Speed", PerfectPlacementPlugin.aemincreaseScrollSpeed.Value.ToString() },
+                    { "Decrease Speed", PerfectPlacementPlugin.aemdecreaseScrollSpeed.Value.ToString() }
+                });
+            }
+        }
+
 
         #region ConfigOptions
 
         private static ConfigEntry<Toggle> _serverConfigLocked = null!;
-        
+
         /* FPM Configs */
         internal static ConfigEntry<Toggle> fpmIsEnabled = null!;
         internal static ConfigEntry<KeyCode> fpmrotateY = null!;
@@ -203,16 +235,17 @@ namespace PerfectPlacement
         internal static ConfigEntry<KeyCode> fpmrotateZ = null!;
         internal static ConfigEntry<KeyCode> fpmcopyRotationParallel = null!;
         internal static ConfigEntry<KeyCode> fpmcopyRotationPerpendicular = null!;
-        
+
         /* ABM Configs */
         internal static ConfigEntry<Toggle> abmIsEnabled = null!;
         internal static ConfigEntry<KeyCode> abmenterAdvancedBuildingMode = null!;
+        internal static ConfigEntry<KeyCode> abmresetAdvancedBuildingMode = null!;
         internal static ConfigEntry<KeyCode> abmexitAdvancedBuildingMode = null!;
         internal static ConfigEntry<KeyCode> abmcopyObjectRotation = null!;
         internal static ConfigEntry<KeyCode> abmpasteObjectRotation = null!;
         internal static ConfigEntry<KeyCode> abmincreaseScrollSpeed = null!;
         internal static ConfigEntry<KeyCode> abmdecreaseScrollSpeed = null!;
-        
+
         /* AEM Configs */
         internal static ConfigEntry<Toggle> aemIsEnabled = null!;
         internal static ConfigEntry<KeyCode> aementerAdvancedEditingMode = null!;
@@ -223,7 +256,7 @@ namespace PerfectPlacement
         internal static ConfigEntry<KeyCode> aempasteObjectRotation = null!;
         internal static ConfigEntry<KeyCode> aemincreaseScrollSpeed = null!;
         internal static ConfigEntry<KeyCode> aemdecreaseScrollSpeed = null!;
-        
+
         /* Grid Configs */
         internal static ConfigEntry<Toggle> gridAlignmentEnabled = null!;
         internal static ConfigEntry<KeyCode> alignToGrid = null!;

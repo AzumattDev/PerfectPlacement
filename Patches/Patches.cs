@@ -8,6 +8,18 @@ using UnityEngine;
 
 namespace PerfectPlacement.Patches;
 
+[HarmonyPatch(typeof(GameCamera),nameof(GameCamera.Awake))]
+static class CachedCameraDistance
+{
+    internal static float cachedCameraDistanceMax;
+    internal static float cachedCameraDistanceMin;
+    static void Prefix(GameCamera __instance)
+    {
+        cachedCameraDistanceMax = __instance.m_maxDistance;
+        cachedCameraDistanceMin = __instance.m_minDistance;
+    }
+}
+
 /// <summary>
 /// Advanced Editing Mode Game Camera changes
 /// </summary>
@@ -23,7 +35,8 @@ public static class BlockCameraScrollInAEM
         }
         else
         {
-            __instance.m_maxDistance = 6;
+            __instance.m_maxDistance = CachedCameraDistance.cachedCameraDistanceMax;
+            __instance.m_minDistance = CachedCameraDistance.cachedCameraDistanceMin;
         }
     }
 }

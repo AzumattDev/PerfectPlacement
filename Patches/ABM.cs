@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using PerfectPlacement.Patches.Compatibility.WardIsLove;
+using PerfectPlacement.UI;
 using UnityEngine;
 
 namespace PerfectPlacement.Patches
@@ -22,6 +23,9 @@ namespace PerfectPlacement.Patches
         static bool blockDefaultFunction;
 
         private static Piece component;
+        
+        private static Quaternion InitialRotation;
+        private static Vector3 InitialPosition;
 
         // Modification Speeds
         const float BASE_TRANSLATION_DISTANCE = (float)0.1; // 1/10th of a 1m pole
@@ -98,8 +102,7 @@ namespace PerfectPlacement.Patches
             if (isActive)
             {
                 // Maximum distance between player and placed piece
-                if (Vector3.Distance(PlayerInstance.transform.position, component.transform.position) >
-                    PlayerInstance.m_maxPlaceDistance)
+                if (Vector3.Distance(PlayerInstance.transform.position, component.transform.position) > PlayerInstance.m_maxPlaceDistance)
                 {
                     exitMode();
                 }
@@ -123,7 +126,14 @@ namespace PerfectPlacement.Patches
             float rX = 0;
             float rZ = 0;
             float rY = 0;
-
+            PerfectPlacementPlugin.UpdateKeyBindings();
+            
+            // Resetting
+            if (Input.GetKeyDown(PerfectPlacementPlugin.abmresetAdvancedBuildingMode.Value))
+            {
+                resetObjectTransform();
+            }
+            
             // CONTROL PRESSED
             if (Input.GetKeyDown(KeyCode.LeftControl))
             {
@@ -287,8 +297,7 @@ namespace PerfectPlacement.Patches
                 else
                 {
                     component2.StopConnectionEffect();
-                    PlayerInstance.m_placementStatus =
-                        Player.PlacementStatus.ExtensionMissingStation; // Missing Station
+                    PlayerInstance.m_placementStatus = Player.PlacementStatus.ExtensionMissingStation; // Missing Station
                 }
 
                 if (component2.OtherExtensionInRange(component.m_spaceRequirement))
@@ -297,8 +306,7 @@ namespace PerfectPlacement.Patches
                 }
             }
 
-            if (component.m_onlyInTeleportArea &&
-                !EffectArea.IsPointInsideArea(component.transform.position, EffectArea.Type.Teleport))
+            if (component.m_onlyInTeleportArea && !EffectArea.IsPointInsideArea(component.transform.position, EffectArea.Type.Teleport))
             {
                 PlayerInstance.m_placementStatus = Player.PlacementStatus.NoTeleportArea;
             }
@@ -322,8 +330,7 @@ namespace PerfectPlacement.Patches
             
             if (WardIsLovePlugin.IsLoaded())
             {
-                if (WardIsLovePlugin.WardEnabled().Value &&
-                    WardMonoscript.CheckInWardMonoscript(PlayerInstance.m_placementGhost.transform.position))
+                if (WardIsLovePlugin.WardEnabled().Value && WardMonoscript.CheckInWardMonoscript(PlayerInstance.m_placementGhost.transform.position))
                 {
                     if (!WardMonoscript.CheckAccess(PlayerInstance.m_placementGhost.transform.position, radius))
                     {
@@ -349,6 +356,9 @@ namespace PerfectPlacement.Patches
             isActive = true;
             blockDefaultFunction = true;
             component = PlayerInstance.m_placementGhost.GetComponent<Piece>();
+            InitialPosition = component.transform.position;
+            InitialRotation = component.transform.rotation;
+            KeyBindingOverlay.ToggleOverlay(true);
         }
 
         private static void exitMode()
@@ -357,11 +367,20 @@ namespace PerfectPlacement.Patches
             exitOnNextIteration = true;
             isActive = false;
             component = null;
+            KeyBindingOverlay.ToggleOverlay(false);
         }
 
         private static bool isInBuildMode()
         {
             return PlayerInstance.InPlaceMode();
+        }
+        
+        private static void resetObjectTransform()
+        {
+            if (component == null) return;
+            notifyUser("Object has been reset to initial position & rotation.");
+            component.transform.position = InitialPosition;
+            component.transform.rotation = InitialRotation;
         }
 
         private static GameObject selectedPrefab()
@@ -425,16 +444,14 @@ namespace PerfectPlacement.Patches
 
             if (Input.GetKeyDown(PerfectPlacementPlugin.abmincreaseScrollSpeed.Value))
             {
-                currentModificationSpeed = Mathf.Clamp(currentModificationSpeed + speedDelta, MIN_MODIFICATION_SPEED,
-                    MAX_MODIFICATION_SPEED);
+                currentModificationSpeed = Mathf.Clamp(currentModificationSpeed + speedDelta, MIN_MODIFICATION_SPEED, MAX_MODIFICATION_SPEED);
 
                 notifyUser("Modification Speed: " + currentModificationSpeed);
             }
 
             if (Input.GetKeyDown(PerfectPlacementPlugin.abmdecreaseScrollSpeed.Value))
             {
-                currentModificationSpeed = Mathf.Clamp(currentModificationSpeed - speedDelta, MIN_MODIFICATION_SPEED,
-                    MAX_MODIFICATION_SPEED);
+                currentModificationSpeed = Mathf.Clamp(currentModificationSpeed - speedDelta, MIN_MODIFICATION_SPEED, MAX_MODIFICATION_SPEED);
 
                 notifyUser("Modification Speed: " + currentModificationSpeed);
             }

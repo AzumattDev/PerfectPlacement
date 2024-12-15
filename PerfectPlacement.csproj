@@ -110,6 +110,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="KeyBindingOverlay.cs" />
+        <Compile Include="Patches\Compatibility\FirstPersonModeCompat.cs" />
         <Compile Include="Patches\Util.cs"/>
         <Compile Include="Plugin.cs"/>
         <Compile Include="Patches\ABM.cs"/>

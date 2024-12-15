@@ -42,9 +42,9 @@ namespace PerfectPlacement.Patches
         {
             PlayerInstance = __instance;
 
-            if (AEM.isActive)
+            if (AEM.IsInAemMode())
             {
-                if (isActive)
+                if (IsInAbmMode())
                 {
                     exitMode();
                 }
@@ -54,7 +54,7 @@ namespace PerfectPlacement.Patches
 
             if (Input.GetKeyDown(PerfectPlacementPlugin.abmexitAdvancedBuildingMode.Value))
             {
-                if (isActive)
+                if (IsInAbmMode())
                 {
                     exitMode();
                 }
@@ -70,7 +70,7 @@ namespace PerfectPlacement.Patches
                 component = null;
             }
 
-            if (isActive && component == null)
+            if (IsInAbmMode() && component == null)
             {
                 exitMode();
 
@@ -80,7 +80,7 @@ namespace PerfectPlacement.Patches
             // Check if prefab selected (build pieces) & ghost is ready
             if (selectedPrefab() == null || PlayerInstance.m_placementGhost == null)
             {
-                if (isActive)
+                if (IsInAbmMode())
                 {
                     exitMode();
                 }
@@ -91,7 +91,7 @@ namespace PerfectPlacement.Patches
             // Check if Build Mode && Correct build mode
             if (isInBuildMode() && IsHoeOrTerrainTool(selectedPrefab()))
             {
-                if (isActive)
+                if (IsInAbmMode())
                 {
                     exitMode();
                 }
@@ -99,7 +99,7 @@ namespace PerfectPlacement.Patches
                 return;
             }
 
-            if (isActive)
+            if (IsInAbmMode())
             {
                 // Maximum distance between player and placed piece
                 if (Vector3.Distance(PlayerInstance.transform.position, component.transform.position) > PlayerInstance.m_maxPlaceDistance)
@@ -375,6 +375,11 @@ namespace PerfectPlacement.Patches
             return PlayerInstance.InPlaceMode();
         }
         
+        public static bool IsInAbmMode()
+        {
+            return isActive;
+        }
+        
         private static void resetObjectTransform()
         {
             if (component == null) return;
@@ -428,7 +433,7 @@ namespace PerfectPlacement.Patches
 
         private static void isRunning()
         {
-            if (isActive)
+            if (IsInAbmMode())
             {
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "ABM is active");
             }

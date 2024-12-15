@@ -8,6 +8,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using JetBrains.Annotations;
 using PerfectPlacement.Patches;
+using PerfectPlacement.Patches.Compatibility;
 using PerfectPlacement.UI;
 using ServerSync;
 using UnityEngine;
@@ -22,19 +23,16 @@ namespace PerfectPlacement
          *
          */
         internal const string ModName = "PerfectPlacement";
-        internal const string ModVersion = "1.1.9";
+        internal const string ModVersion = "1.1.10";
         internal const string Author = "Azumatt_and_ValheimPlusDevs";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
         private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
         internal static string ConnectionError = "";
-        private readonly Harmony _harmony = new(ModGUID);
-
-        public static readonly ManualLogSource PerfectPlacementLogger =
-            BepInEx.Logging.Logger.CreateLogSource(ModName);
-
-        private static readonly ConfigSync ConfigSync = new(ModGUID)
-            { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
+        internal readonly Harmony _harmony = new(ModGUID);
+        public static readonly ManualLogSource PerfectPlacementLogger = BepInEx.Logging.Logger.CreateLogSource(ModName);
+        private static readonly ConfigSync ConfigSync = new(ModGUID) { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
+        internal static PerfectPlacementPlugin Instance;
 
         public enum Toggle
         {
@@ -54,6 +52,7 @@ namespace PerfectPlacement
 
         public void Awake()
         {
+            Instance = this;
             _serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On,
                 new ConfigDescription("If on, the configuration is locked and can be changed by server admins only.", null, new ConfigurationManagerAttributes { Order = 5 }));
             _ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
@@ -130,6 +129,7 @@ namespace PerfectPlacement
         private void Start()
         {
             AutoDoc();
+            FirstPersonModeCompat.Init();
         }
 
         internal void AutoDoc()
@@ -195,7 +195,7 @@ namespace PerfectPlacement
 
         internal static void UpdateKeyBindings()
         {
-            if (ABM.isActive)
+            if (ABM.IsInAbmMode())
             {
                 KeyBindingOverlay.UpdateBindings("Advanced Building Mode", new Dictionary<string, string>
                 {
@@ -208,7 +208,7 @@ namespace PerfectPlacement
                     { "Decrease Speed", PerfectPlacementPlugin.abmdecreaseScrollSpeed.Value.ToString() }
                 });
             }
-            else if (AEM.isActive)
+            else if (AEM.IsInAemMode())
             {
                 KeyBindingOverlay.UpdateBindings("Advanced Editing Mode", new Dictionary<string, string>
                 {

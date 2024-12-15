@@ -1,4 +1,5 @@
-﻿using PerfectPlacement.Patches.Compatibility.WardIsLove;
+﻿using HarmonyLib;
+using PerfectPlacement.Patches.Compatibility.WardIsLove;
 using PerfectPlacement.UI;
 using UnityEngine;
 
@@ -108,7 +109,7 @@ namespace PerfectPlacement.Patches
             // CHECK FOR BUILD MODE
             if (isInBuildMode())
             {
-                if (isActive)
+                if (IsInAemMode())
                 {
                     exitMode();
                     resetObjectTransform();
@@ -118,9 +119,9 @@ namespace PerfectPlacement.Patches
             }
 
             // CHECK FOR ABM
-            if (ABM.isActive)
+            if (ABM.IsInAbmMode())
             {
-                if (isActive)
+                if (IsInAemMode())
                 {
                     exitMode();
                     resetObjectTransform();
@@ -129,7 +130,7 @@ namespace PerfectPlacement.Patches
                 return;
             }
 
-            if (!isActive)
+            if (!IsInAemMode())
             {
                 if (Input.GetKeyDown(PerfectPlacementPlugin.aementerAdvancedEditingMode.Value))
                 {
@@ -145,7 +146,7 @@ namespace PerfectPlacement.Patches
                 resetObjectTransform();
             }
 
-            if (isActive)
+            if (IsInAemMode())
             {
                 // If object is not in existence anymore
                 if (hitPieceStillExists())
@@ -369,7 +370,7 @@ namespace PerfectPlacement.Patches
             try
             {
                 // check to see if the hit object still exists
-                if (isActive)
+                if (IsInAemMode())
                 {
                     isInExistence = true;
                 }
@@ -435,6 +436,10 @@ namespace PerfectPlacement.Patches
             return PlayerInstance.InPlaceMode();
         }
 
+        public static bool IsInAemMode()
+        {
+            return isActive;
+        }
         private static void resetObjectTransform()
         {
             if (HitPiece == null) return;
@@ -475,7 +480,7 @@ namespace PerfectPlacement.Patches
 
         private static void isRunning()
         {
-            if (isActive)
+            if (IsInAemMode())
             {
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "AEM is active");
             }
@@ -512,6 +517,18 @@ namespace PerfectPlacement.Patches
             {
                 currentModificationSpeed = Mathf.Clamp(currentModificationSpeed - speedDelta, MIN_MODIFICATION_SPEED, MAX_MODIFICATION_SPEED);
                 notifyUser("Modification Speed: " + currentModificationSpeed);
+            }
+        }
+    }
+    
+    [HarmonyPatch(typeof(Player),nameof(Player.CanRotatePiece))]
+    static class OverridePlayerInPlaceModePatch
+    {
+        static void Postfix(Player __instance, ref bool __result)
+        {
+            if (AEM.IsInAemMode())
+            {
+                __result = true;
             }
         }
     }

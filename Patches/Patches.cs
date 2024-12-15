@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using BepInEx.Bootstrap;
 using HarmonyLib;
+using PerfectPlacement.Patches.Compatibility;
 using UnityEngine;
 
 namespace PerfectPlacement.Patches;
 
-[HarmonyPatch(typeof(GameCamera),nameof(GameCamera.Awake))]
+[HarmonyPatch(typeof(GameCamera), nameof(GameCamera.Awake))]
 static class CachedCameraDistance
 {
     internal static float cachedCameraDistanceMax;
     internal static float cachedCameraDistanceMin;
+
     static void Prefix(GameCamera __instance)
     {
         cachedCameraDistanceMax = __instance.m_maxDistance;
@@ -28,15 +31,18 @@ public static class BlockCameraScrollInAEM
 {
     private static void Prefix(GameCamera __instance)
     {
-        if (AEM.isActive)
+        if (AEM.IsInAemMode())
         {
             __instance.m_maxDistance = __instance.m_distance;
             __instance.m_minDistance = __instance.m_distance;
         }
         else
         {
-            __instance.m_maxDistance = CachedCameraDistance.cachedCameraDistanceMax;
-            __instance.m_minDistance = CachedCameraDistance.cachedCameraDistanceMin;
+            if (!FirstPersonModeCompat.IsFirstPerson)
+            {
+                __instance.m_maxDistance = CachedCameraDistance.cachedCameraDistanceMax;
+                __instance.m_minDistance = CachedCameraDistance.cachedCameraDistanceMin;
+            }
         }
     }
 }
@@ -100,7 +106,7 @@ public static class Player_UpdatePlacementGhost_Transpile
 
     public static Quaternion GetRotation(Player __instance)
     {
-        if (ABM.isActive)
+        if (ABM.IsInAbmMode())
         {
             return Quaternion.Euler(0f, __instance.m_placeRotationDegrees * (float)__instance.m_placeRotation, 0f);
         }
@@ -121,7 +127,7 @@ public static class ModifyPUpdatePlacement
         if (PerfectPlacementPlugin.fpmIsEnabled.Value == PerfectPlacementPlugin.Toggle.Off)
             return;
 
-        if (ABM.isActive)
+        if (ABM.IsInAbmMode())
             return;
 
         if (!__instance.InPlaceMode())
@@ -214,7 +220,7 @@ public static class Player_UpdatePlacementGhost_Patch
 
     private static void Prefix(ref Player __instance, bool flashGuardStone)
     {
-        if (ABM.isActive)
+        if (ABM.IsInAbmMode())
         {
             // ABM controls the ghost/marker position, so undo any ghost/marker changes the patched method
             // does by storing the transforms in the prefix and then applying them in the postfix.
@@ -234,7 +240,7 @@ public static class Player_UpdatePlacementGhost_Patch
 
     private static void Postfix(ref Player __instance)
     {
-        if (ABM.isActive)
+        if (ABM.IsInAbmMode())
         {
             __instance.m_placementGhost.transform.position = (Vector3)ghostPosition;
             __instance.m_placementGhost.transform.rotation = (Quaternion)ghostRotation;
@@ -396,7 +402,7 @@ public static class GridAlignment
         if (player.m_placementGhost == null || !player.IsPlayer())
             return;
 
-        if (ABM.isActive)
+        if (ABM.IsInAbmMode())
             return;
 
         bool altMode = ZInput.GetButton("AltPlace") || ZInput.GetButton("JoyAltPlace");

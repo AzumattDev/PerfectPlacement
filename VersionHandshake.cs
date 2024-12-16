@@ -82,7 +82,7 @@ namespace AllManagersModTemplate
             string? version = pkg.ReadString();
             string? hash = pkg.ReadString();
 
-            var hashForAssembly = ComputeHashForMod().Replace("-", "");
+            string? hashForAssembly = ComputeHashForMod().Replace("-", "");
             PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("Version check, local: " +
                                                                   PerfectPlacementPlugin.ModVersion +
                                                                   ",  remote: " + version);

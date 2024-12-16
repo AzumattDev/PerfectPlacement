@@ -156,7 +156,7 @@ namespace PerfectPlacement.Patches
                     try
                     {
                         ZNetView component1 = HitPiece.GetComponent<ZNetView>();
-                        if ((UnityEngine.Object)component1 == (UnityEngine.Object)null)
+                        if (component1 == null)
                         {
                             PerfectPlacement.PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("AEM: Error, network object empty. Code: 2.");
                             exitMode();
@@ -205,7 +205,7 @@ namespace PerfectPlacement.Patches
 
                 // REMOVE OLD
                 ZNetView component1 = HitPiece.GetComponent<ZNetView>();
-                if ((UnityEngine.Object)component1 == (UnityEngine.Object)null)
+                if (component1 == null)
                 {
                     PerfectPlacement.PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("AEM: Error, network object empty.");
 
@@ -217,7 +217,7 @@ namespace PerfectPlacement.Patches
                 component1.ClaimOwnership();
                 ZNetScene.instance.Destroy(HitPiece.gameObject);
                 PerfectPlacement.PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("AEM: Executed.");
-
+                //GizmoManager.gizmoManager.DestroyGizmos();
                 exitMode();
                 return;
             }
@@ -275,28 +275,28 @@ namespace PerfectPlacement.Patches
                 exitMode();
             }
 
-            var currentRotationAngleDegrees = BASE_ROTATION_ANGLE_DEGREES * currentModificationSpeed;
+            float currentRotationAngleDegrees = BASE_ROTATION_ANGLE_DEGREES * currentModificationSpeed;
             if (Input.GetAxis("Mouse ScrollWheel") > 0f)
             {
                 Quaternion rotation;
                 if (controlFlag)
                 {
+                    GizmoManager.CurrentAxis = Vector3.right;
                     rX++;
                     rotation = Quaternion.Euler(HitPiece.transform.eulerAngles.x + (currentRotationAngleDegrees * rX),
                         HitPiece.transform.eulerAngles.y, HitPiece.transform.eulerAngles.z); // forward to backwards
                 }
                 else if (altFlag)
                 {
+                    GizmoManager.CurrentAxis = Vector3.forward;
                     rZ++;
-                    rotation = Quaternion.Euler(HitPiece.transform.eulerAngles.x, HitPiece.transform.eulerAngles.y,
-                        HitPiece.transform.eulerAngles.z + (currentRotationAngleDegrees * rZ)); // diagonal
+                    rotation = Quaternion.Euler(HitPiece.transform.eulerAngles.x, HitPiece.transform.eulerAngles.y, HitPiece.transform.eulerAngles.z + (currentRotationAngleDegrees * rZ)); // diagonal
                 }
                 else
                 {
+                    GizmoManager.CurrentAxis = Vector3.up;
                     rY++;
-                    rotation = Quaternion.Euler(HitPiece.transform.eulerAngles.x,
-                        HitPiece.transform.eulerAngles.y + (currentRotationAngleDegrees * rY),
-                        HitPiece.transform.eulerAngles.z); // left<->right
+                    rotation = Quaternion.Euler(HitPiece.transform.eulerAngles.x, HitPiece.transform.eulerAngles.y + (currentRotationAngleDegrees * rY), HitPiece.transform.eulerAngles.z); // left<->right
                 }
 
                 HitPiece.transform.rotation = rotation;
@@ -307,28 +307,27 @@ namespace PerfectPlacement.Patches
                 Quaternion rotation;
                 if (controlFlag)
                 {
+                    GizmoManager.CurrentAxis = Vector3.right;
                     rX--;
-                    rotation = Quaternion.Euler(HitPiece.transform.eulerAngles.x + (currentRotationAngleDegrees * rX),
-                        HitPiece.transform.eulerAngles.y, HitPiece.transform.eulerAngles.z); // forward to backwards
+                    rotation = Quaternion.Euler(HitPiece.transform.eulerAngles.x + (currentRotationAngleDegrees * rX), HitPiece.transform.eulerAngles.y, HitPiece.transform.eulerAngles.z); // forward to backwards
                 }
                 else if (altFlag)
                 {
+                    GizmoManager.CurrentAxis = Vector3.forward;
                     rZ--;
-                    rotation = Quaternion.Euler(HitPiece.transform.eulerAngles.x, HitPiece.transform.eulerAngles.y,
-                        HitPiece.transform.eulerAngles.z + (currentRotationAngleDegrees * rZ)); // diagonal
+                    rotation = Quaternion.Euler(HitPiece.transform.eulerAngles.x, HitPiece.transform.eulerAngles.y, HitPiece.transform.eulerAngles.z + (currentRotationAngleDegrees * rZ)); // diagonal
                 }
                 else
                 {
+                    GizmoManager.CurrentAxis = Vector3.up;
                     rY--;
-                    rotation = Quaternion.Euler(HitPiece.transform.eulerAngles.x,
-                        HitPiece.transform.eulerAngles.y + (currentRotationAngleDegrees * rY),
-                        HitPiece.transform.eulerAngles.z); // left<->right
+                    rotation = Quaternion.Euler(HitPiece.transform.eulerAngles.x, HitPiece.transform.eulerAngles.y + (currentRotationAngleDegrees * rY), HitPiece.transform.eulerAngles.z); // left<->right
                 }
 
                 HitPiece.transform.rotation = rotation;
             }
 
-            var currentTranslationDistance = BASE_TRANSLATION_DISTANCE * currentModificationSpeed;
+            float currentTranslationDistance = BASE_TRANSLATION_DISTANCE * currentModificationSpeed;
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
                 if (controlFlag)
@@ -413,7 +412,7 @@ namespace PerfectPlacement.Patches
                 // private zone
                 hitValid = false;
             }
-            
+
             if (WardIsLovePlugin.IsLoaded())
             {
                 if (WardIsLovePlugin.WardEnabled().Value &&
@@ -440,6 +439,7 @@ namespace PerfectPlacement.Patches
         {
             return isActive;
         }
+
         private static void resetObjectTransform()
         {
             if (HitPiece == null) return;
@@ -520,8 +520,8 @@ namespace PerfectPlacement.Patches
             }
         }
     }
-    
-    [HarmonyPatch(typeof(Player),nameof(Player.CanRotatePiece))]
+
+    [HarmonyPatch(typeof(Player), nameof(Player.CanRotatePiece))]
     static class OverridePlayerInPlaceModePatch
     {
         static void Postfix(Player __instance, ref bool __result)

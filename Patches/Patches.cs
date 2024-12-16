@@ -108,10 +108,10 @@ public static class Player_UpdatePlacementGhost_Transpile
     {
         if (ABM.IsInAbmMode())
         {
-            return Quaternion.Euler(0f, __instance.m_placeRotationDegrees * (float)__instance.m_placeRotation, 0f);
+            return Quaternion.Euler(0f, __instance.m_placeRotationDegrees * __instance.m_placeRotation, 0f);
         }
 
-        var rotation = PerfectPlacementPlugin.PlayersData.TryGetValue(__instance, out PerfectPlacementPlugin.PlayerData? value)
+        Vector3 rotation = PerfectPlacementPlugin.PlayersData.TryGetValue(__instance, out PerfectPlacementPlugin.PlayerData? value)
             ? value.PlaceRotation
             : __instance.m_placeRotation * 22.5f * Vector3.up;
 
@@ -149,9 +149,9 @@ public static class ModifyPUpdatePlacement
 
     private static void RotateWithWheel(Player __instance)
     {
-        var wheel = Input.GetAxis("Mouse ScrollWheel");
+        float wheel = Input.GetAxis("Mouse ScrollWheel");
 
-        var playerData = PerfectPlacementPlugin.PlayersData[__instance];
+        PerfectPlacementPlugin.PlayerData? playerData = PerfectPlacementPlugin.PlayersData[__instance];
 
         if (!wheel.Equals(0f) || ZInput.GetButton("JoyRotate"))
         {
@@ -188,9 +188,9 @@ public static class ModifyPUpdatePlacement
         if (!Input.GetKeyUp(keyCode)) return;
         Piece piece;
         if (!__instance.PieceRayTest(out Vector3 _, out Vector3 _, out piece, out Heightmap _, out Collider _, false) || piece == null) return;
-        var playerData = PerfectPlacementPlugin.PlayersData[__instance];
+        PerfectPlacementPlugin.PlayerData? playerData = PerfectPlacementPlugin.PlayersData[__instance];
 
-        var rotation = piece.transform.rotation;
+        Quaternion rotation = piece.transform.rotation;
         if (perpendicular)
             rotation *= Quaternion.Euler(0, 90, 0);
 
@@ -337,15 +337,15 @@ public static class GridAlignment
 
     public static void GetAlignment(Piece piece, out Vector3 alignment, out Vector3 offset)
     {
-        var points = new System.Collections.Generic.List<Transform>();
+        List<Transform>? points = new System.Collections.Generic.List<Transform>();
         piece.GetSnapPoints(points);
         if (points.Count != 0)
         {
             Vector3 min = Vector3.positiveInfinity;
             Vector3 max = Vector3.negativeInfinity;
-            foreach (var point in points)
+            foreach (Transform? point in points)
             {
-                var pos = point.localPosition;
+                Vector3 pos = point.localPosition;
                 min = Vector3.Min(min, pos);
                 max = Vector3.Max(max, pos);
             }
@@ -407,16 +407,16 @@ public static class GridAlignment
 
         bool altMode = ZInput.GetButton("AltPlace") || ZInput.GetButton("JoyAltPlace");
 
-        var piece = player.m_placementGhost.GetComponent<Piece>();
+        Piece? piece = player.m_placementGhost.GetComponent<Piece>();
 
-        var newVal = piece.transform.position;
+        Vector3 newVal = piece.transform.position;
         newVal = Quaternion.Inverse(piece.transform.rotation) * newVal;
 
         Vector3 alignment;
         Vector3 offset;
         GetAlignment(piece, out alignment, out offset);
         newVal += offset;
-        var copy = newVal;
+        Vector3 copy = newVal;
         newVal = new Vector3(newVal.x / alignment.x, newVal.y / alignment.y, newVal.z / alignment.z);
         float alphaX, alphaY, alphaZ;
         newVal = new UnityEngine.Vector3(Align(newVal.x, out alphaX), Align(newVal.y, out alphaY), Align(newVal.z, out alphaZ));

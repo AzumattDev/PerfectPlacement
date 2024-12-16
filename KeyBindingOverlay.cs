@@ -86,6 +86,7 @@ namespace PerfectPlacement.UI
 
             ContentSizeFitter? contentSizeFitter = panel.AddComponent<ContentSizeFitter>();
             contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             contentArea = panel.transform;
         }

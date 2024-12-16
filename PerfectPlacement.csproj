@@ -10,9 +10,9 @@
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>PerfectPlacement</RootNamespace>
         <AssemblyName>PerfectPlacement</AssemblyName>
-        <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
-        <LangVersion>10</LangVersion>
+        <LangVersion>latestmajor</LangVersion>
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -111,6 +111,7 @@
     <ItemGroup>
         <Compile Include="KeyBindingOverlay.cs" />
         <Compile Include="Patches\Compatibility\FirstPersonModeCompat.cs" />
+        <Compile Include="Patches\Gizmos.cs" />
         <Compile Include="Patches\Util.cs"/>
         <Compile Include="Plugin.cs"/>
         <Compile Include="Patches\ABM.cs"/>

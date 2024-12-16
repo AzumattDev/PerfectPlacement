@@ -23,7 +23,7 @@ namespace PerfectPlacement
          *
          */
         internal const string ModName = "PerfectPlacement";
-        internal const string ModVersion = "1.1.10";
+        internal const string ModVersion = "1.1.11";
         internal const string Author = "Azumatt_and_ValheimPlusDevs";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -199,26 +199,38 @@ namespace PerfectPlacement
             {
                 KeyBindingOverlay.UpdateBindings("Advanced Building Mode", new Dictionary<string, string>
                 {
-                    { "Enter Mode", PerfectPlacementPlugin.abmenterAdvancedBuildingMode.Value.ToString() },
-                    { "Exit Mode", PerfectPlacementPlugin.abmexitAdvancedBuildingMode.Value.ToString() },
-                    { "Reset Position/Rotation", PerfectPlacementPlugin.abmresetAdvancedBuildingMode.Value.ToString() },
-                    { "Copy Rotation", PerfectPlacementPlugin.abmcopyObjectRotation.Value.ToString() },
-                    { "Paste Rotation", PerfectPlacementPlugin.abmpasteObjectRotation.Value.ToString() },
-                    { "Increase Speed", PerfectPlacementPlugin.abmincreaseScrollSpeed.Value.ToString() },
-                    { "Decrease Speed", PerfectPlacementPlugin.abmdecreaseScrollSpeed.Value.ToString() }
+                    { "Enter Mode", abmenterAdvancedBuildingMode.Value.ToString() },
+                    { "Exit Mode", abmexitAdvancedBuildingMode.Value.ToString() },
+                    { "Reset Position/Rotation", abmresetAdvancedBuildingMode.Value.ToString() },
+                    { "Copy Rotation", abmcopyObjectRotation.Value.ToString() },
+                    { "Paste Rotation", abmpasteObjectRotation.Value.ToString() },
+                    { "Increase Speed", abmincreaseScrollSpeed.Value.ToString() },
+                    { "Decrease Speed", abmdecreaseScrollSpeed.Value.ToString() },
+                    { "Move Up [Green Arrow]", "Ctrl + ↑" },
+                    { "Move Down [Green Arrow]", "Ctrl + ↓" },
+                    { "Move Forward [Blue Arrow]", "↑" },
+                    { "Move Backward [Blue Arrow]", "↓" },
+                    { "Move Left [Red Arrow]", "←" },
+                    { "Move Right [Red Arrow]", "→" }
                 });
             }
             else if (AEM.IsInAemMode())
             {
                 KeyBindingOverlay.UpdateBindings("Advanced Editing Mode", new Dictionary<string, string>
                 {
-                    { "Enter Mode", PerfectPlacementPlugin.aementerAdvancedEditingMode.Value.ToString() },
-                    { "Exit Mode", PerfectPlacementPlugin.aemabortAndExitAdvancedEditingMode.Value.ToString() },
-                    { "Confirm Placement", PerfectPlacementPlugin.aemconfirmPlacementOfAdvancedEditingMode.Value.ToString() },
-                    { "Copy Rotation", PerfectPlacementPlugin.aemcopyObjectRotation.Value.ToString() },
-                    { "Paste Rotation", PerfectPlacementPlugin.aempasteObjectRotation.Value.ToString() },
-                    { "Increase Speed", PerfectPlacementPlugin.aemincreaseScrollSpeed.Value.ToString() },
-                    { "Decrease Speed", PerfectPlacementPlugin.aemdecreaseScrollSpeed.Value.ToString() }
+                    { "Enter Mode", aementerAdvancedEditingMode.Value.ToString() },
+                    { "Exit Mode", aemabortAndExitAdvancedEditingMode.Value.ToString() },
+                    { "Confirm Placement", aemconfirmPlacementOfAdvancedEditingMode.Value.ToString() },
+                    { "Copy Rotation", aemcopyObjectRotation.Value.ToString() },
+                    { "Paste Rotation", aempasteObjectRotation.Value.ToString() },
+                    { "Increase Speed", aemincreaseScrollSpeed.Value.ToString() },
+                    { "Decrease Speed", aemdecreaseScrollSpeed.Value.ToString() },
+                    { "Move Up [Green Arrow]", "Ctrl + ↑" },
+                    { "Move Down [Green Arrow]", "Ctrl + ↓" },
+                    { "Move Forward [Blue Arrow]", "↑" },
+                    { "Move Backward [Blue Arrow]", "↓" },
+                    { "Move Left [Red Arrow]", "←" },
+                    { "Move Right [Red Arrow]", "→" }
                 });
             }
         }

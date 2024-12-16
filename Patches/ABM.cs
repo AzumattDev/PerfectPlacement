@@ -23,7 +23,7 @@ namespace PerfectPlacement.Patches
         static bool blockDefaultFunction;
 
         private static Piece component;
-        
+
         private static Quaternion InitialRotation;
         private static Vector3 InitialPosition;
 
@@ -123,48 +123,45 @@ namespace PerfectPlacement.Patches
 
         private static void listenToHotKeysAndDoWork()
         {
-            float rX = 0;
-            float rZ = 0;
-            float rY = 0;
+            float rX = 0, rZ = 0, rY = 0;
+
             PerfectPlacementPlugin.UpdateKeyBindings();
-            
+
             // Resetting
             if (Input.GetKeyDown(PerfectPlacementPlugin.abmresetAdvancedBuildingMode.Value))
             {
                 resetObjectTransform();
             }
-            
+
             // CONTROL PRESSED
             if (Input.GetKeyDown(KeyCode.LeftControl))
             {
                 controlFlag = true;
+                GizmoManager.CurrentAxis = Vector3.right;
             }
 
             if (Input.GetKeyUp(KeyCode.LeftControl))
             {
                 controlFlag = false;
+                GizmoManager.CurrentAxis = Vector3.up;
             }
 
             // SHIFT PRESSED
-            if (Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                shiftFlag = true;
-            }
+            if (Input.GetKeyDown(KeyCode.LeftShift)) shiftFlag = true;
+            if (Input.GetKeyUp(KeyCode.LeftShift)) shiftFlag = false;
 
-            if (Input.GetKeyUp(KeyCode.LeftShift))
-            {
-                shiftFlag = false;
-            }
 
             // LEFT ALT PRESSED
             if (Input.GetKeyDown(KeyCode.LeftAlt))
             {
                 altFlag = true;
+                GizmoManager.CurrentAxis = Vector3.forward;
             }
 
             if (Input.GetKeyUp(KeyCode.LeftAlt))
             {
                 altFlag = false;
+                GizmoManager.CurrentAxis = Vector3.up;
             }
 
             changeModificationSpeed();
@@ -179,28 +176,25 @@ namespace PerfectPlacement.Patches
                 component.transform.rotation = savedRotation;
             }
 
-            var currentRotationAngleDegrees = BASE_ROTATION_ANGLE_DEGREES * currentModificationSpeed;
+            float currentRotationAngleDegrees = BASE_ROTATION_ANGLE_DEGREES * currentModificationSpeed;
+
             if (Input.GetAxis("Mouse ScrollWheel") > 0f)
             {
                 Quaternion rotation;
                 if (controlFlag)
                 {
                     rX++;
-                    rotation = Quaternion.Euler(component.transform.eulerAngles.x + (currentRotationAngleDegrees * rX),
-                        component.transform.eulerAngles.y, component.transform.eulerAngles.z); // forward to backwards
+                    rotation = Quaternion.Euler(component.transform.eulerAngles.x + (currentRotationAngleDegrees * rX), component.transform.eulerAngles.y, component.transform.eulerAngles.z); // forward to backwards
                 }
                 else if (altFlag)
                 {
                     rZ++;
-                    rotation = Quaternion.Euler(component.transform.eulerAngles.x, component.transform.eulerAngles.y,
-                        component.transform.eulerAngles.z + (currentRotationAngleDegrees * rZ)); // diagonal
+                    rotation = Quaternion.Euler(component.transform.eulerAngles.x, component.transform.eulerAngles.y, component.transform.eulerAngles.z + (currentRotationAngleDegrees * rZ)); // diagonal
                 }
                 else
                 {
                     rY++;
-                    rotation = Quaternion.Euler(component.transform.eulerAngles.x,
-                        component.transform.eulerAngles.y + (currentRotationAngleDegrees * rY),
-                        component.transform.eulerAngles.z); // left<->right
+                    rotation = Quaternion.Euler(component.transform.eulerAngles.x, component.transform.eulerAngles.y + (currentRotationAngleDegrees * rY), component.transform.eulerAngles.z); // left<->right
                 }
 
                 component.transform.rotation = rotation;
@@ -212,27 +206,25 @@ namespace PerfectPlacement.Patches
                 if (controlFlag)
                 {
                     rX--;
-                    rotation = Quaternion.Euler(component.transform.eulerAngles.x + (currentRotationAngleDegrees * rX),
-                        component.transform.eulerAngles.y, component.transform.eulerAngles.z); // forward to backwards
+                    rotation = Quaternion.Euler(component.transform.eulerAngles.x + (currentRotationAngleDegrees * rX), component.transform.eulerAngles.y, component.transform.eulerAngles.z); // forward to backwards
                 }
                 else if (altFlag)
                 {
                     rZ--;
-                    rotation = Quaternion.Euler(component.transform.eulerAngles.x, component.transform.eulerAngles.y,
-                        component.transform.eulerAngles.z + (currentRotationAngleDegrees * rZ)); // diagonal
+                    rotation = Quaternion.Euler(component.transform.eulerAngles.x, component.transform.eulerAngles.y, component.transform.eulerAngles.z + (currentRotationAngleDegrees * rZ)); // diagonal
                 }
                 else
                 {
                     rY--;
-                    rotation = Quaternion.Euler(component.transform.eulerAngles.x,
-                        component.transform.eulerAngles.y + (currentRotationAngleDegrees * rY),
-                        component.transform.eulerAngles.z); // left<->right
+                    rotation = Quaternion.Euler(component.transform.eulerAngles.x, component.transform.eulerAngles.y + (currentRotationAngleDegrees * rY), component.transform.eulerAngles.z); // left<->right
                 }
 
                 component.transform.rotation = rotation;
             }
 
-            var currentTranslationDistance = BASE_TRANSLATION_DISTANCE * currentModificationSpeed;
+            float currentTranslationDistance = BASE_TRANSLATION_DISTANCE * currentModificationSpeed;
+
+
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
                 if (controlFlag)
@@ -327,7 +319,7 @@ namespace PerfectPlacement.Patches
             {
                 PlayerInstance.m_placementStatus = Player.PlacementStatus.PrivateZone;
             }
-            
+
             if (WardIsLovePlugin.IsLoaded())
             {
                 if (WardIsLovePlugin.WardEnabled().Value && WardMonoscript.CheckInWardMonoscript(PlayerInstance.m_placementGhost.transform.position))
@@ -338,7 +330,7 @@ namespace PerfectPlacement.Patches
                     }
                 }
             }
-            
+
 
             if (PlayerInstance.m_placementStatus != 0)
             {
@@ -374,12 +366,12 @@ namespace PerfectPlacement.Patches
         {
             return PlayerInstance.InPlaceMode();
         }
-        
+
         public static bool IsInAbmMode()
         {
             return isActive;
         }
-        
+
         private static void resetObjectTransform()
         {
             if (component == null) return;

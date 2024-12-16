@@ -31,6 +31,6 @@ public class Util
     
     public static Character getPlayerCharacter(Player __instance)
     {
-        return (Character)__instance;
+        return __instance;
     }
 }

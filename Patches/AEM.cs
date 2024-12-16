@@ -217,7 +217,6 @@ namespace PerfectPlacement.Patches
                 component1.ClaimOwnership();
                 ZNetScene.instance.Destroy(HitPiece.gameObject);
                 PerfectPlacement.PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("AEM: Executed.");
-                //GizmoManager.gizmoManager.DestroyGizmos();
                 exitMode();
                 return;
             }

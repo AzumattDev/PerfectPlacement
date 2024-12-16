@@ -197,8 +197,11 @@ namespace PerfectPlacement
         {
             if (ABM.IsInAbmMode())
             {
-                KeyBindingOverlay.UpdateBindings("Advanced Building Mode", new Dictionary<string, string>
+                KeyBindingOverlay.UpdateBindings(KeyBindingOverlay.FormatBinding("orange", "Advanced Building Mode"), new Dictionary<string, string>
                 {
+                    { "Left Alt", KeyBindingOverlay.FormatBinding("blue", "Rotate on Blue") },
+                    { "ScrollWheel", KeyBindingOverlay.FormatBinding("green", "Rotate on Green") },
+                    { "Left Ctrl", KeyBindingOverlay.FormatBinding("red", "Rotate on Red") },
                     { "Enter Mode", abmenterAdvancedBuildingMode.Value.ToString() },
                     { "Exit Mode", abmexitAdvancedBuildingMode.Value.ToString() },
                     { "Reset Position/Rotation", abmresetAdvancedBuildingMode.Value.ToString() },
@@ -206,18 +209,21 @@ namespace PerfectPlacement
                     { "Paste Rotation", abmpasteObjectRotation.Value.ToString() },
                     { "Increase Speed", abmincreaseScrollSpeed.Value.ToString() },
                     { "Decrease Speed", abmdecreaseScrollSpeed.Value.ToString() },
-                    { "Move Up [Green Arrow]", "Ctrl + ↑" },
-                    { "Move Down [Green Arrow]", "Ctrl + ↓" },
-                    { "Move Forward [Blue Arrow]", "↑" },
-                    { "Move Backward [Blue Arrow]", "↓" },
-                    { "Move Left [Red Arrow]", "←" },
-                    { "Move Right [Red Arrow]", "→" }
+                    { $"Move Up [{KeyBindingOverlay.FormatBinding("green", "Green Arrow")}]", "Ctrl + ↑" },
+                    { $"Move Down [{KeyBindingOverlay.FormatBinding("green", "Green Arrow")}]", "Ctrl + ↓" },
+                    { $"Move Forward [{KeyBindingOverlay.FormatBinding("blue", "Blue Arrow")}]", "↑" },
+                    { $"Move Backward [{KeyBindingOverlay.FormatBinding("blue", "Blue Arrow")}]", "↓" },
+                    { $"Move Left [{KeyBindingOverlay.FormatBinding("red", "Red Arrow")}]", "←" },
+                    { $"Move Right [{KeyBindingOverlay.FormatBinding("red", "Red Arrow")}]", "→" }
                 });
             }
             else if (AEM.IsInAemMode())
             {
-                KeyBindingOverlay.UpdateBindings("Advanced Editing Mode", new Dictionary<string, string>
+                KeyBindingOverlay.UpdateBindings(KeyBindingOverlay.FormatBinding("orange", "Advanced Editing Mode"), new Dictionary<string, string>
                 {
+                    { "Left Alt", KeyBindingOverlay.FormatBinding("blue", "Rotate on Blue") },
+                    { "ScrollWheel", KeyBindingOverlay.FormatBinding("green", "Rotate on Green") },
+                    { "Left Ctrl", KeyBindingOverlay.FormatBinding("red", "Rotate on Red") },
                     { "Enter Mode", aementerAdvancedEditingMode.Value.ToString() },
                     { "Exit Mode", aemabortAndExitAdvancedEditingMode.Value.ToString() },
                     { "Confirm Placement", aemconfirmPlacementOfAdvancedEditingMode.Value.ToString() },
@@ -225,16 +231,23 @@ namespace PerfectPlacement
                     { "Paste Rotation", aempasteObjectRotation.Value.ToString() },
                     { "Increase Speed", aemincreaseScrollSpeed.Value.ToString() },
                     { "Decrease Speed", aemdecreaseScrollSpeed.Value.ToString() },
-                    { "Move Up [Green Arrow]", "Ctrl + ↑" },
-                    { "Move Down [Green Arrow]", "Ctrl + ↓" },
-                    { "Move Forward [Blue Arrow]", "↑" },
-                    { "Move Backward [Blue Arrow]", "↓" },
-                    { "Move Left [Red Arrow]", "←" },
-                    { "Move Right [Red Arrow]", "→" }
+                    { $"Move Up [{KeyBindingOverlay.FormatBinding("green", "Green Arrow")}]", "Ctrl + ↑" },
+                    { $"Move Down [{KeyBindingOverlay.FormatBinding("green", "Green Arrow")}]", "Ctrl + ↓" },
+                    { $"Move Forward [{KeyBindingOverlay.FormatBinding("blue", "Blue Arrow")}]", "↑" },
+                    { $"Move Backward [{KeyBindingOverlay.FormatBinding("blue", "Blue Arrow")}]", "↓" },
+                    { $"Move Left [{KeyBindingOverlay.FormatBinding("red", "Red Arrow")}]", "←" },
+                    { $"Move Right [{KeyBindingOverlay.FormatBinding("red", "Red Arrow")}]", "→" }
+                });
+            }
+            else
+            {
+                KeyBindingOverlay.UpdateBindings(KeyBindingOverlay.FormatBinding("orange", "Enter Modes"), new Dictionary<string, string>
+                {
+                    { "Enter ABM", abmenterAdvancedBuildingMode.Value.ToString() },
+                    { "Enter AEM \n\t[Without Hammer equipped and looking at existing build piece!]", aementerAdvancedEditingMode.Value.ToString() },
                 });
             }
         }
-
 
         #region ConfigOptions
 

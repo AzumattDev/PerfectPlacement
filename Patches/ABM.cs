@@ -84,7 +84,7 @@ namespace PerfectPlacement.Patches
                 {
                     exitMode();
                 }
-
+                if(!AEM.IsInAemMode()) {KeyBindingOverlay.ToggleOverlay(false);}
                 return;
             }
 
@@ -118,6 +118,8 @@ namespace PerfectPlacement.Patches
                 {
                     startMode();
                 }
+                PerfectPlacementPlugin.UpdateKeyBindings();
+                KeyBindingOverlay.ToggleOverlay(true);
             }
         }
 

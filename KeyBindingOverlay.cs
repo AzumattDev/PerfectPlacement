@@ -47,7 +47,7 @@ namespace PerfectPlacement.UI
             keyBindings[mode].Clear();
             foreach (KeyValuePair<string, string> binding in bindings)
             {
-                keyBindings[mode].Add($"[<color=yellow><b>{binding.Value}</b></color>]: {binding.Key}");
+                keyBindings[mode].Add($"{FormatBinding("yellow", binding.Value)}: {binding.Key}");
             }
 
             // Refresh UI content
@@ -55,6 +55,10 @@ namespace PerfectPlacement.UI
             ShowMode(mode);
         }
 
+        public static string FormatBinding(string color, string text)
+        {
+            return $"<color={color}><b>{text}</b></color>";
+        }
 
         private static void CreateOverlay()
         {

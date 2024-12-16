@@ -60,10 +60,7 @@ public class GizmoManager : MonoBehaviour
             _lastGhost = null;
             return;
         }
-
-        //_showGizmos = true;
-
-        // Calculate radius only once
+        
         if (_ghost != _lastGhost)
         {
             _lastGhost = _ghost;
@@ -133,14 +130,6 @@ public class GizmoManager : MonoBehaviour
         // Set the radius to be slightly larger than the bounding sphere
         ArcRadius = bounds.extents.magnitude + 0.5f; // Add a margin for visibility
     }
-
-    /*private void DrawArrowForAxis(Vector3 direction, Color color, Quaternion objectRotation, float scale)
-    {
-        const float length = 0.85f;
-        Vector3 position = _ghost.transform.position + objectRotation * (direction * (ArcRadius + 0.5f)); // Position outside the arcs
-
-        GizmoMeshCache.DrawArrow(position, objectRotation * direction, length, color, scale);
-    }*/
 
 
     private void DrawArrowForAxis(Vector3 direction, Color color, Quaternion objectRotation, float scale)
@@ -233,7 +222,7 @@ public static class GizmoMeshCache
         }
 
         Quaternion rotation = Quaternion.LookRotation(direction);
-        // Create a 90-degree rotation around the Y-axis (positive is to the "right")
+        // Create a 90-degree rotation around the X-axis
         Quaternion rightRotation = Quaternion.Euler(90, 0, 0);
         // Apply the 90-degree rotation to the original rotation so they fucking point where I want.
         Quaternion rotatedTheWayIWant = rotation * rightRotation;
@@ -287,24 +276,11 @@ public static class GizmoMeshCache
         material.SetPass(0);
         GL.Begin(GL.LINES);
         GL.Color(color);
-        GL.Vertex3(start.x, start.y, start.z);
-        GL.Vertex3(end.x, end.y, end.z);
-        GL.End();
-        GL.PopMatrix();
-    }
-    /*public static void DrawLine(Vector3 start, Vector3 end, Color color)
-    {
-        Material material = GetMaterial(color);
-
-        GL.PushMatrix();
-        material.SetPass(0);
-        GL.Begin(GL.LINES);
-        GL.Color(color);
         GL.Vertex(start);
         GL.Vertex(end);
         GL.End();
         GL.PopMatrix();
-    }*/
+    }
 
 
     private static Material GetMaterial(Color color)

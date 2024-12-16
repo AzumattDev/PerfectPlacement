@@ -14,6 +14,14 @@
 
 ## Source code for this variation can be found [here](https://github.com/AzumattDev/PerfectPlacement)
 
+## Gizmo's and instructions for easier movement
+
+![](https://github.com/AzumattDev/PerfectPlacement/blob/master/Thunderstore/gizmodemo.png)
+
+![](https://github.com/AzumattDev/PerfectPlacement/blob/master/Thunderstore/gizmodemo_abm.png)
+
+![](https://github.com/AzumattDev/PerfectPlacement/blob/master/Thunderstore/gizmodemo_aem.png)
+
 <details><summary>Configuration Options</summary>
 
 `1 - General`

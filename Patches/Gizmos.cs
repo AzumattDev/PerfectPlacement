@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using HarmonyLib;
+using PerfectPlacement;
 using PerfectPlacement.Patches;
 
 [HarmonyPatch(typeof(Player))]
@@ -31,9 +32,6 @@ public class GizmoManager : MonoBehaviour
 
     private float ArcRadius = 2f;
     private const float LineLength = 2f;
-    private const float DefaultArcScale = 1f;
-    private const float ActiveArcScale = 1.2f;
-    private const float InactiveArcScale = 0.8f;
     public static Vector3 CurrentAxis = Vector3.zero;
     private GameObject _lastGhost;
 
@@ -52,6 +50,27 @@ public class GizmoManager : MonoBehaviour
 
     private void Update()
     {
+        // If never show gizmos is on, bail out.
+        if (PerfectPlacementPlugin.neverShowGizmos.Value.IsOn())
+        {
+            return;
+        }
+
+        // If "only show in ABM/AEM" is on, and we are not in either mode, return.
+        bool onlyInModes = PerfectPlacementPlugin.onlyShowGizmosInABMOrAEM.Value.IsOn();
+        if (onlyInModes && (!ABM.IsInAbmMode() && !AEM.IsInAemMode()))
+        {
+            return;
+        }
+
+        // If neither arcs nor arrows are shown, no reason to continue.
+        bool showArcs = PerfectPlacementPlugin.showArcs.Value.IsOn();
+        bool showArrows = PerfectPlacementPlugin.showArrows.Value.IsOn();
+        if (!showArcs && !showArrows)
+        {
+            return;
+        }
+
         _ghost = Player.m_localPlayer?.m_placementGhost ?? (AEM.IsInAemMode() ? AEM.HitObject : null);
 
 
@@ -60,19 +79,19 @@ public class GizmoManager : MonoBehaviour
             _lastGhost = null;
             return;
         }
-        
+
         if (_ghost != _lastGhost)
         {
             _lastGhost = _ghost;
             CalculateGizmoRadius();
         }
-        
+
         RenderGizmos();
     }
 
     private void OnRenderObject()
     {
-        if (_ghost != null)
+        if (_ghost != null && PerfectPlacementPlugin.showArrows.Value.IsOn())
         {
             DrawLinesToArrows(_ghost.transform.rotation);
         }
@@ -83,18 +102,29 @@ public class GizmoManager : MonoBehaviour
         Axis activeAxis = GetActiveAxis();
         Quaternion objectRotation = _ghost.transform.rotation;
 
-        // Keep Y-axis fixed and rotate X/Z based on object rotation
-        GizmoMeshCache.DrawArc(_ghost.transform.position, ArcRadius, xAxisGizmoColor, Vector3.right, objectRotation, activeAxis == Axis.X ? ActiveArcScale : (activeAxis == Axis.None ? DefaultArcScale : InactiveArcScale));
-        GizmoMeshCache.DrawArc(_ghost.transform.position, ArcRadius, yAxisGizmoColor, Vector3.up, Quaternion.identity, activeAxis == Axis.Y ? ActiveArcScale : (activeAxis == Axis.None ? DefaultArcScale : InactiveArcScale));
-        GizmoMeshCache.DrawArc(_ghost.transform.position, ArcRadius, zAxisGizmoColor, Vector3.forward, objectRotation, activeAxis == Axis.Z ? ActiveArcScale : (activeAxis == Axis.None ? DefaultArcScale : InactiveArcScale));
+        float defaultArcScale = PerfectPlacementPlugin.defaultArcScale.Value;
+        float activeArcScale = PerfectPlacementPlugin.activeArcScale.Value;
+        float inactiveArcScale = PerfectPlacementPlugin.inactiveArcScale.Value;
 
-        // Draw arrows for all axes, aligned with the object's rotation
-        DrawArrowForAxis(Vector3.right, xAxisGizmoColor, objectRotation, activeAxis == Axis.X ? ActiveArcScale : (activeAxis == Axis.None ? DefaultArcScale : InactiveArcScale));
-        DrawArrowForAxis(Vector3.up, yAxisGizmoColor, Quaternion.identity, activeAxis == Axis.Y ? ActiveArcScale : (activeAxis == Axis.None ? DefaultArcScale : InactiveArcScale));
-        DrawArrowForAxis(Vector3.forward, zAxisGizmoColor, objectRotation, activeAxis == Axis.Z ? ActiveArcScale : (activeAxis == Axis.None ? DefaultArcScale : InactiveArcScale));
+        if (PerfectPlacementPlugin.showArcs.Value.IsOn())
+        {
+            // Keep Y-axis fixed and rotate X/Z based on object rotation
+            GizmoMeshCache.DrawArc(_ghost.transform.position, ArcRadius, PerfectPlacementPlugin.xAxisGizmoColor.Value, Vector3.right, objectRotation, activeAxis == Axis.X ? activeArcScale : (activeAxis == Axis.None ? defaultArcScale : inactiveArcScale));
+            GizmoMeshCache.DrawArc(_ghost.transform.position, ArcRadius, PerfectPlacementPlugin.yAxisGizmoColor.Value, Vector3.up, Quaternion.identity, activeAxis == Axis.Y ? activeArcScale : (activeAxis == Axis.None ? defaultArcScale : inactiveArcScale));
+            GizmoMeshCache.DrawArc(_ghost.transform.position, ArcRadius, PerfectPlacementPlugin.zAxisGizmoColor.Value, Vector3.forward, objectRotation, activeAxis == Axis.Z ? activeArcScale : (activeAxis == Axis.None ? defaultArcScale : inactiveArcScale));
+        }
 
-        // Draw lines connecting the gizmo center to the arrows
-        DrawLinesToArrows(objectRotation);
+        if (PerfectPlacementPlugin.showArrows.Value.IsOn())
+        {
+            // Draw arrows for all axes, aligned with the object's rotation
+            DrawArrowForAxis(Vector3.right, PerfectPlacementPlugin.xAxisGizmoColor.Value, objectRotation, activeAxis == Axis.X ? activeArcScale : (activeAxis == Axis.None ? defaultArcScale : inactiveArcScale));
+            DrawArrowForAxis(Vector3.up, PerfectPlacementPlugin.yAxisGizmoColor.Value, Quaternion.identity, activeAxis == Axis.Y ? activeArcScale : (activeAxis == Axis.None ? defaultArcScale : inactiveArcScale));
+            DrawArrowForAxis(Vector3.forward, PerfectPlacementPlugin.zAxisGizmoColor.Value, objectRotation, activeAxis == Axis.Z ? activeArcScale : (activeAxis == Axis.None ? defaultArcScale : inactiveArcScale));
+
+
+            // Draw lines connecting the gizmo center to the arrows
+            DrawLinesToArrows(objectRotation);
+        }
     }
 
 
@@ -128,15 +158,15 @@ public class GizmoManager : MonoBehaviour
         }
 
         // Set the radius to be slightly larger than the bounding sphere
-        ArcRadius = bounds.extents.magnitude + 0.5f; // Add a margin for visibility
+        ArcRadius = bounds.extents.magnitude + PerfectPlacementPlugin.extraRadiusMargin.Value; // Add a margin for visibility
     }
 
 
     private void DrawArrowForAxis(Vector3 direction, Color color, Quaternion objectRotation, float scale)
     {
-        const float lineLength = 2f; // Length of the line
-        const float arrowTipLength = 0.85f; // Length of the arrow tip
-        const float arrowTipScale = 0.2f; // Width of the arrow tip
+        float lineLength = PerfectPlacementPlugin.arrowLineLength.Value; // Length of the line
+        float arrowTipLength = PerfectPlacementPlugin.arrowTipLength.Value; // Length of the arrow tip
+        float arrowTipScale = PerfectPlacementPlugin.arrowTipScale.Value; // Width of the arrow tip
 
         Vector3 origin = _ghost.transform.position;
         Vector3 lineEnd = origin + objectRotation * (direction * lineLength);
@@ -155,9 +185,9 @@ public class GizmoManager : MonoBehaviour
         Vector3 origin = _ghost.transform.position;
 
         // Draw lines to each arrow
-        GizmoMeshCache.DrawLine(origin, origin + objectRotation * (Vector3.right * (ArcRadius + offset)), xAxisGizmoColor);
-        GizmoMeshCache.DrawLine(origin, origin + Vector3.up * (ArcRadius + offset), yAxisGizmoColor);
-        GizmoMeshCache.DrawLine(origin, origin + objectRotation * (Vector3.forward * (ArcRadius + offset)), zAxisGizmoColor);
+        GizmoMeshCache.DrawLine(origin, origin + objectRotation * (Vector3.right * (ArcRadius + offset)), PerfectPlacementPlugin.xAxisGizmoColor.Value);
+        GizmoMeshCache.DrawLine(origin, origin + Vector3.up * (ArcRadius + offset), PerfectPlacementPlugin.yAxisGizmoColor.Value);
+        GizmoMeshCache.DrawLine(origin, origin + objectRotation * (Vector3.forward * (ArcRadius + offset)), PerfectPlacementPlugin.zAxisGizmoColor.Value);
     }
 }
 

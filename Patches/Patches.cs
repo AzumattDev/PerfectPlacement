@@ -57,8 +57,7 @@ public static class Player_Update_Patch
     private static GameObject timeObj = null;
     private static double savedEnvMinutes = -1;
 
-    private static void Postfix(ref Player __instance, ref Vector3 ___m_moveDir, ref Vector3 ___m_lookDir,
-        ref GameObject ___m_placementGhost, Transform ___m_eye)
+    private static void Postfix(ref Player __instance, ref Vector3 ___m_moveDir, ref Vector3 ___m_lookDir, ref GameObject ___m_placementGhost, Transform ___m_eye)
     {
         if (!__instance.m_nview.IsValid() || !__instance.m_nview.IsOwner()) return;
 
@@ -175,8 +174,6 @@ public static class ModifyPUpdatePlacement
             }
 
             playerData.PlaceRotation = Util.ClampAngles(playerData.PlaceRotation);
-
-            //PerfectPlacement.PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("Angle " + playerData.PlaceRotation);
         }
     }
 
@@ -186,8 +183,7 @@ public static class ModifyPUpdatePlacement
             return;
 
         if (!Input.GetKeyUp(keyCode)) return;
-        Piece piece;
-        if (!__instance.PieceRayTest(out Vector3 _, out Vector3 _, out piece, out Heightmap _, out Collider _, false) || piece == null) return;
+        if (!__instance.PieceRayTest(out Vector3 _, out Vector3 _, out Piece piece, out Heightmap _, out Collider _, false) || piece == null) return;
         PerfectPlacementPlugin.PlayerData? playerData = PerfectPlacementPlugin.PlayersData[__instance];
 
         Quaternion rotation = piece.transform.rotation;
@@ -240,6 +236,7 @@ public static class Player_UpdatePlacementGhost_Patch
 
     private static void Postfix(ref Player __instance)
     {
+        if (Player.m_localPlayer != null && __instance != Player.m_localPlayer) return;
         if (ABM.IsInAbmMode())
         {
             __instance.m_placementGhost.transform.position = (Vector3)ghostPosition;
@@ -290,9 +287,7 @@ public static class GridAlignment
 
     private static void Postfix(ref Player __instance)
     {
-        if (!__instance.IsPlayer())
-            return;
-
+        if (Player.m_localPlayer != null && __instance != Player.m_localPlayer) return;
         if (PerfectPlacementPlugin.gridAlignmentEnabled.Value == PerfectPlacementPlugin.Toggle.Off)
             return;
 
@@ -412,9 +407,7 @@ public static class GridAlignment
         Vector3 newVal = piece.transform.position;
         newVal = Quaternion.Inverse(piece.transform.rotation) * newVal;
 
-        Vector3 alignment;
-        Vector3 offset;
-        GetAlignment(piece, out alignment, out offset);
+        GetAlignment(piece, out Vector3 alignment, out Vector3 offset);
         newVal += offset;
         Vector3 copy = newVal;
         newVal = new Vector3(newVal.x / alignment.x, newVal.y / alignment.y, newVal.z / alignment.z);

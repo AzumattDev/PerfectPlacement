@@ -45,12 +45,11 @@ namespace PerfectPlacement.Patches
         public static bool ExecuteRayCast(Player playerInstance)
         {
             int layerMask = playerInstance.m_placeRayMask;
-            RaycastHit raycastHit;
 
             if (Physics.Raycast(
                     GameCamera.instance.transform.position,
                     GameCamera.instance.transform.forward,
-                    out raycastHit, 50f, layerMask
+                    out RaycastHit raycastHit, 50f, layerMask
                 ) &&
                 raycastHit.collider &&
                 !raycastHit.collider.attachedRigidbody &&

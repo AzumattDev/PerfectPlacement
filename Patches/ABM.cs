@@ -334,14 +334,7 @@ namespace PerfectPlacement.Patches
             }
 
 
-            if (PlayerInstance.m_placementStatus != 0)
-            {
-                component.SetInvalidPlacementHeightlight(true);
-            }
-            else
-            {
-                component.SetInvalidPlacementHeightlight(false);
-            }
+            component.SetInvalidPlacementHeightlight(PlayerInstance.m_placementStatus != 0);
         }
 
         private static void startMode()

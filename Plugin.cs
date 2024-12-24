@@ -23,7 +23,7 @@ namespace PerfectPlacement
          *
          */
         internal const string ModName = "PerfectPlacement";
-        internal const string ModVersion = "1.2.0";
+        internal const string ModVersion = "1.2.1";
         internal const string Author = "Azumatt_and_ValheimPlusDevs";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
@@ -53,8 +53,7 @@ namespace PerfectPlacement
         public void Awake()
         {
             Instance = this;
-            _serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On,
-                new ConfigDescription("If on, the configuration is locked and can be changed by server admins only.", null, new ConfigurationManagerAttributes { Order = 5 }));
+            _serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On, new ConfigDescription("If on, the configuration is locked and can be changed by server admins only.", null, new ConfigurationManagerAttributes { Order = 5 }));
             _ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
 
 

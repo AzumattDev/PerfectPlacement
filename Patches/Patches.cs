@@ -61,13 +61,13 @@ public static class Player_Update_Patch
     {
         if (!__instance.m_nview.IsValid() || !__instance.m_nview.IsOwner()) return;
 
-        if (PerfectPlacementPlugin.aemIsEnabled.Value == PerfectPlacementPlugin.Toggle.On)
+        if (PerfectPlacementPlugin.aemIsEnabled.Value.IsOn())
         {
             AEM.PlayerInstance = __instance;
             AEM.run();
         }
 
-        if (PerfectPlacementPlugin.abmIsEnabled.Value == PerfectPlacementPlugin.Toggle.On)
+        if (PerfectPlacementPlugin.abmIsEnabled.Value.IsOn())
         {
             ABM.Run(ref __instance);
         }
@@ -83,7 +83,7 @@ public static class Player_UpdatePlacementGhost_Transpile
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
-        if (PerfectPlacementPlugin.fpmIsEnabled.Value == PerfectPlacementPlugin.Toggle.Off) return instructions;
+        if (PerfectPlacementPlugin.fpmIsEnabled.Value.IsOff()) return instructions;
 
         List<CodeInstruction> il = instructions.ToList();
 
@@ -123,7 +123,7 @@ public static class ModifyPUpdatePlacement
 {
     private static void Postfix(Player __instance, bool takeInput, float dt)
     {
-        if (PerfectPlacementPlugin.fpmIsEnabled.Value == PerfectPlacementPlugin.Toggle.Off)
+        if (PerfectPlacementPlugin.fpmIsEnabled.Value.IsOff())
             return;
 
         if (ABM.IsInAbmMode())
@@ -270,7 +270,7 @@ public static class Player_UpdatePlacementGhost_Patch
             }
         }
 
-        if (PerfectPlacementPlugin.gridAlignmentEnabled.Value == PerfectPlacementPlugin.Toggle.On)
+        if (PerfectPlacementPlugin.gridAlignmentEnabled.Value.IsOn())
         {
             if (GridAlignment.AlignPressed ^ GridAlignment.AlignToggled)
                 GridAlignment.UpdatePlacementGhost(__instance);
@@ -288,7 +288,7 @@ public static class GridAlignment
     private static void Postfix(ref Player __instance)
     {
         if (Player.m_localPlayer != null && __instance != Player.m_localPlayer) return;
-        if (PerfectPlacementPlugin.gridAlignmentEnabled.Value == PerfectPlacementPlugin.Toggle.Off)
+        if (PerfectPlacementPlugin.gridAlignmentEnabled.Value.IsOff())
             return;
 
         if (Input.GetKeyDown(PerfectPlacementPlugin.alignToGrid.Value))
@@ -411,11 +411,10 @@ public static class GridAlignment
         newVal += offset;
         Vector3 copy = newVal;
         newVal = new Vector3(newVal.x / alignment.x, newVal.y / alignment.y, newVal.z / alignment.z);
-        float alphaX, alphaY, alphaZ;
-        newVal = new UnityEngine.Vector3(Align(newVal.x, out alphaX), Align(newVal.y, out alphaY), Align(newVal.z, out alphaZ));
+        newVal = new UnityEngine.Vector3(Align(newVal.x, out float alphaX), Align(newVal.y, out float alphaY), Align(newVal.z, out float alphaZ));
         if (altMode)
         {
-            float alphaMin = 0.2f;
+            const float alphaMin = 0.2f;
             if (Mathf.Abs(alphaX) >= alphaMin && Mathf.Abs(alphaX) >= Mathf.Abs(alphaY) && Mathf.Abs(alphaX) >= Mathf.Abs(alphaZ))
                 newVal.x += Mathf.Sign(alphaX);
             else if (Mathf.Abs(alphaY) >= alphaMin && Mathf.Abs(alphaY) >= Mathf.Abs(alphaZ))

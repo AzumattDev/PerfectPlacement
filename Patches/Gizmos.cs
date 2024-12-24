@@ -53,6 +53,7 @@ public class GizmoManager : MonoBehaviour
         // If never show gizmos is on, bail out.
         if (PerfectPlacementPlugin.neverShowGizmos.Value.IsOn())
         {
+            ClearGizmos();
             return;
         }
 
@@ -60,6 +61,7 @@ public class GizmoManager : MonoBehaviour
         bool onlyInModes = PerfectPlacementPlugin.onlyShowGizmosInABMOrAEM.Value.IsOn();
         if (onlyInModes && (!ABM.IsInAbmMode() && !AEM.IsInAemMode()))
         {
+            ClearGizmos();
             return;
         }
 
@@ -68,6 +70,7 @@ public class GizmoManager : MonoBehaviour
         bool showArrows = PerfectPlacementPlugin.showArrows.Value.IsOn();
         if (!showArcs && !showArrows)
         {
+            ClearGizmos();
             return;
         }
 
@@ -76,7 +79,7 @@ public class GizmoManager : MonoBehaviour
 
         if (_ghost == null)
         {
-            _lastGhost = null;
+            ClearGizmos();
             return;
         }
 
@@ -188,6 +191,13 @@ public class GizmoManager : MonoBehaviour
         GizmoMeshCache.DrawLine(origin, origin + objectRotation * (Vector3.right * (ArcRadius + offset)), PerfectPlacementPlugin.xAxisGizmoColor.Value);
         GizmoMeshCache.DrawLine(origin, origin + Vector3.up * (ArcRadius + offset), PerfectPlacementPlugin.yAxisGizmoColor.Value);
         GizmoMeshCache.DrawLine(origin, origin + objectRotation * (Vector3.forward * (ArcRadius + offset)), PerfectPlacementPlugin.zAxisGizmoColor.Value);
+    }
+
+    private void ClearGizmos()
+    {
+        _ghost = null;
+        _lastGhost = null;
+        CurrentAxis = Vector3.zero;
     }
 }
 

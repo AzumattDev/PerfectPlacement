@@ -12,14 +12,14 @@ public class Util
     internal static int ClampPlaceRotation(int index)
     {
         const int MaxIndex = 16; // 360/22.5f
-            
+
         if (index < 0)
             index = MaxIndex + index;
         else if (index >= MaxIndex)
             index -= MaxIndex;
         return index;
     }
-        
+
     private static float ClampAngle(float angle)
     {
         if (angle < 0)
@@ -28,7 +28,7 @@ public class Util
             angle -= 360;
         return angle;
     }
-    
+
     public static Character getPlayerCharacter(Player __instance)
     {
         return __instance;

@@ -78,7 +78,7 @@ public static class Player_Update_Patch
 public static class Player_UpdatePlacementGhost_Transpile
 {
     private static MethodInfo method_Quaternion_Euler = AccessTools.Method(typeof(Quaternion), nameof(Quaternion.Euler), new Type[] { typeof(float), typeof(float), typeof(float) });
-    private static MethodInfo method_GetRotation = AccessTools.Method(typeof(Player_UpdatePlacementGhost_Transpile), nameof(Player_UpdatePlacementGhost_Transpile.GetRotation));
+    private static MethodInfo method_GetRotation = AccessTools.Method(typeof(Player_UpdatePlacementGhost_Transpile), nameof(GetRotation));
 
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -202,7 +202,7 @@ public static class ModifyPUpdatePlacement
         playerData.Opposite = !playerData.Opposite;
 
         playerData.PlaceRotation = rotation.eulerAngles;
-        PerfectPlacement.PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("Sync Angle " + playerData.PlaceRotation);
+        PerfectPlacementPlugin.PerfectPlacementLogger.LogInfo("Sync Angle " + playerData.PlaceRotation);
     }
 }
 
@@ -332,7 +332,7 @@ public static class GridAlignment
 
     public static void GetAlignment(Piece piece, out Vector3 alignment, out Vector3 offset)
     {
-        List<Transform>? points = new System.Collections.Generic.List<Transform>();
+        List<Transform>? points = new List<Transform>();
         piece.GetSnapPoints(points);
         if (points.Count != 0)
         {
@@ -411,7 +411,7 @@ public static class GridAlignment
         newVal += offset;
         Vector3 copy = newVal;
         newVal = new Vector3(newVal.x / alignment.x, newVal.y / alignment.y, newVal.z / alignment.z);
-        newVal = new UnityEngine.Vector3(Align(newVal.x, out float alphaX), Align(newVal.y, out float alphaY), Align(newVal.z, out float alphaZ));
+        newVal = new Vector3(Align(newVal.x, out float alphaX), Align(newVal.y, out float alphaY), Align(newVal.z, out float alphaZ));
         if (altMode)
         {
             const float alphaMin = 0.2f;

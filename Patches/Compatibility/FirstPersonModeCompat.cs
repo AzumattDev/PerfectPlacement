@@ -20,7 +20,6 @@ public class FirstPersonModeCompat
             // FirstPersonMode is loaded
             PerfectPlacementPlugin.Instance._harmony.PatchAll(typeof(FirstPersonModeCompat));
         }
-
     }
 
     [HarmonyPatch("FirstPersonMode.Util.Functions, FirstPersonMode", "IsInFirstPersonMode"), HarmonyPostfix]

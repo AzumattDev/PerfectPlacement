@@ -126,6 +126,7 @@
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
     <ItemGroup>
+        <Content Include=".github\workflows\publish-mod.yml" />
         <Content Include=".gitignore"/>
         <Content Include="environment.props"/>
         <Content Include="ILRepack.targets"/>

@@ -23,7 +23,7 @@ public class PerfectPlacementPlugin : BaseUnityPlugin
      *
      */
     internal const string ModName = "PerfectPlacement";
-    internal const string ModVersion = "1.2.3";
+    internal const string ModVersion = "1.2.4";
     internal const string Author = "Azumatt_and_ValheimPlusDevs";
     private const string ModGUID = Author + "." + ModName;
     private static string ConfigFileName = ModGUID + ".cfg";
